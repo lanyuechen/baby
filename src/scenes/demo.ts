@@ -48,21 +48,6 @@ export default class DemoScene {
       })
     });
 
-    // testMap().then(res => {
-    //   // 创建建筑
-    //   console.log('===', res)
-    //   res.forEach(d => {
-    //     const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x - 0.5, 0, node.y - 0.5));
-    //     const poly = BABYLON.MeshBuilder.ExtrudePolygon(
-    //       `building-${d.id}`,
-    //       { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
-    //       scene,
-    //       earcut,
-    //     );
-    //     poly.position.y = d.level;
-    //   })
-    // });
-
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
