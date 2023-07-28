@@ -1,6 +1,6 @@
 import * as BABYLON from 'babylonjs';
 
-import demoScene from '@/scenes/demo';
+import DemoScene from '@/scenes/demo';
 
 export default class {
   engine: BABYLON.Engine;
@@ -11,7 +11,7 @@ export default class {
     window.addEventListener('resize', () => {
       this.engine.resize();
     });
-    this.scene = demoScene(this.engine, this.canvas);
+    this.scene = (new DemoScene(this.engine, this.canvas)).scene;
   }
 
   debug(debugOn: boolean = true) {
@@ -23,7 +23,7 @@ export default class {
   }
 
   run() {
-    this.debug(true);
+    // this.debug(true);
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });

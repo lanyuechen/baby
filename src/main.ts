@@ -1,4 +1,7 @@
 import App from './App';
+import { testMap } from '@/utils/utils';
+
+// testMap();
 
 console.log(`main.ts starting ${App.name}`);
 window.addEventListener('DOMContentLoaded', () => {
