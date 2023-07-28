@@ -1,10 +1,8 @@
 import * as BABYLON from 'babylonjs';
-import earcut from 'earcut';
-import Osm from '@/utils/Osm';
+import OsmBuilding from '@/mesh/OsmBuilding';
 
 export default class DemoScene {
   scene: BABYLON.Scene;
-  osm: Osm = new Osm();
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     this.scene = this.createScene(engine, canvas);
@@ -33,20 +31,7 @@ export default class DemoScene {
     const center = { lon: 116.3160, lat: 40.0468 };
     const radius = 500;
 
-    this.osm.fetchDataPixel(center, radius).then(res => {
-      // 创建建筑
-      console.log('===', res)
-      res.forEach(d => {
-        const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
-        const poly = BABYLON.MeshBuilder.ExtrudePolygon(
-          `building-${d.id}`,
-          { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
-          scene,
-          earcut,
-        );
-        poly.position.y = d.level;
-      })
-    });
+    new OsmBuilding(center, radius, scene);
 
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
