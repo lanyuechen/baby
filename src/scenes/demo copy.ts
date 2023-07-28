@@ -1,10 +1,9 @@
 import * as BABYLON from 'babylonjs';
+import { testMap } from '@/utils/utils';
 import earcut from 'earcut';
-import Osm from '@/utils/Osm';
 
 export default class DemoScene {
   scene: BABYLON.Scene;
-  osm: Osm = new Osm();
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     this.scene = this.createScene(engine, canvas);
@@ -30,14 +29,11 @@ export default class DemoScene {
     // 灯光强度设为0.7
     light.intensity = 0.7;
 
-    const center = { lon: 116.3160, lat: 40.0468 };
-    const radius = 500;
-
-    this.osm.fetchDataPixel(center, radius).then(res => {
+    testMap().then(res => {
       // 创建建筑
       console.log('===', res)
       res.forEach(d => {
-        const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
+        const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x - 0.5, 0, node.y - 0.5));
         const poly = BABYLON.MeshBuilder.ExtrudePolygon(
           `building-${d.id}`,
           { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
@@ -48,22 +44,7 @@ export default class DemoScene {
       })
     });
 
-    // testMap().then(res => {
-    //   // 创建建筑
-    //   console.log('===', res)
-    //   res.forEach(d => {
-    //     const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x - 0.5, 0, node.y - 0.5));
-    //     const poly = BABYLON.MeshBuilder.ExtrudePolygon(
-    //       `building-${d.id}`,
-    //       { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
-    //       scene,
-    //       earcut,
-    //     );
-    //     poly.position.y = d.level;
-    //   })
-    // });
-
-    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
+    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     ground.material = groundMaterial;

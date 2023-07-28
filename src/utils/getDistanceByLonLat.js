@@ -48,21 +48,20 @@ export const getDistanceByVincenty = (p1, p2) => {
   const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
   const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
   const deltaSigma = B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)));
-  const s = b * A * (sigma - deltaSigma);
-  const d = s.toFixed(3); // round to 1mm precision
+  const d = b * A * (sigma - deltaSigma);
   return d;
 };
 
 // Haversine
 export const getDistanceByHaversine = (p1, p2) => {
-  const R = 6371000;
+  const R = 6371000;  // 使用这个半径更加精确
   const deltaLatitude = rad(p2.lat - p1.lat);
   const deltaLongitude = rad(p2.lon - p1.lon);
 
   const lat1 = rad(p1.lat);
   const lat2 = rad(p2.lat);
 
-  const a = Math.sin(deltaLatitude / 2) * Math.sin(deltaLatitude / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLongitude / 2) * Math.sin(deltaLongitude / 2);
+  const a = Math.sin(deltaLatitude / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLongitude / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const d = R * c;
   return d;
