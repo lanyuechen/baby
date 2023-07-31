@@ -12,11 +12,11 @@ export default class {
   }
 
   createPlayer() {
-    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 0.1 }, this.scene);
+    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 0.02 }, this.scene);
     const boxMaterial = new BABYLON.StandardMaterial('playerMaterial', this.scene);
     boxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 1);
     box.material = boxMaterial;
-    box.position.y = 0.3;
+    box.position.y = 0.1;
     return box;
   }
 

@@ -39,22 +39,21 @@ export default class {
   }
 
   move(direction: string) {
+    const speed = 0.1;
     if (direction === 'ArrowUp') {
-      this.y += 0.1;
-      this.rootNode.position.z -= 0.1;
+      this.y += speed;
     } else if (direction === 'ArrowDown') {
-      this.y -= 0.1;
-      this.rootNode.position.z += 0.1;
+      this.y -= speed;
     } else if (direction === 'ArrowLeft') {
-      this.x -= 0.1;
-      this.rootNode.position.x += 0.1;
+      this.x -= speed;
     } else if (direction === 'ArrowRight') {
-      this.x += 0.1;
-      this.rootNode.position.x -= 0.1;
+      this.x += speed;
     }
+
+    this.rootNode.position.x = -(this.x - 0.5);
+    this.rootNode.position.z = -(this.y - 0.5);
     this.updatetile();
   }
-
 
   addKeyboardEventObserver() {
     return this.scene.onKeyboardObservable.add((info) => {
@@ -66,10 +65,5 @@ export default class {
           break;
       }
     })
-  }
-
-
-  update() {
-
   }
 }
