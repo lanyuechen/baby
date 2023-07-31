@@ -1,16 +1,16 @@
 import * as BABYLON from 'babylonjs';
 import earcut from 'earcut';
 import Osm from './Osm';
-import Coord from './Coord';
+import Coord, { PointLla } from './Coord';
 
 export default class OsmTile {
-  center: any;
+  center: PointLla;
   radius: number;
   tileSize: number;
   halfTileSize: number;
   coord: Coord;
 
-  constructor(center: any, tileSize: number) {
+  constructor(center: PointLla, tileSize: number) {
     this.center = center;
     this.tileSize = tileSize;
     this.halfTileSize = tileSize / 2;
