@@ -9,6 +9,8 @@ export default class OsmTile {
   tileSize: number;
   halfTileSize: number;
   coord: Coord;
+  offsetX: number = 0;
+  offsetY: number = 0;
 
   constructor(center: PointLla, tileSize: number) {
     this.center = center;
@@ -18,9 +20,8 @@ export default class OsmTile {
     this.coord = new Coord(center);
   }
 
-  async createBuildings(offset: any, scene: BABYLON.Scene) {
-    offset = { x: 0, y: 0, ...(offset || {}) };
-    const data = await this.fetchDataPixel(offset);
+  async createBuildings(scene: BABYLON.Scene) {
+    const data = await this.fetchDataPixel();
     
     // 创建建筑
     console.log('===', data)
@@ -35,28 +36,30 @@ export default class OsmTile {
       poly.position.y = d.level;
     });
 
-    const ground = BABYLON.MeshBuilder.CreateGround('ground'+Math.random(), { width: 2, height: 2 }, scene);
+    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     ground.material = groundMaterial;
-    ground.position.x = offset.x * 2;
-    ground.position.z = offset.y * 2;
+    ground.position.x = this.offsetX * 2;
+    ground.position.z = this.offsetY * 2;
   }
 
   next(offsetX: number, offsetY: number) {
     const point = this.coord.toEcef(this.tileSize * offsetX, this.tileSize * offsetY);
     const osm = new OsmTile(point, this.tileSize);
+    osm.offsetX = offsetX;
+    osm.offsetY = offsetY;
     return osm;
   }
 
-  async fetchDataPixel(offset: any) {
+  async fetchDataPixel() {
     const osmData = await Osm.fetchData(this.center, this.radius);
-    const data = await this.osmToPixel(osmData, offset);
+    const data = await this.osmToPixel(osmData);
   
     return data;
   }
 
-  async osmToPixel(osmData: any, offset: any) {
+  async osmToPixel(osmData: any) {
     const nodeMap: any = {};
     const buildings: any[] = [];
     const coord = new Coord(this.center);
@@ -67,8 +70,8 @@ export default class OsmTile {
 
         nodeMap[d.id] = {
           ...d,
-          x: enu.e / this.halfTileSize + offset.x * 2,
-          y: enu.n / this.halfTileSize + offset.y * 2,
+          x: enu.e / this.halfTileSize + this.offsetX * 2,
+          y: enu.n / this.halfTileSize + this.offsetY * 2,
         };
       } else if (d.type === 'way') {
         buildings.push({
