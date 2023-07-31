@@ -4,6 +4,11 @@ export const degToRad = (deg: number) => {
   return deg * Math.PI / 180;
 }
 
+export const radToDeg = (rad: number) => {
+  return rad * 180 / Math.PI;
+}
+
+
 export const fetchMap = async (rect: any) => {
   const result = await fetch('https://www.overpass-api.de/api/interpreter?', {
     method: 'POST',

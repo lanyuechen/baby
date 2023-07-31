@@ -1,4 +1,4 @@
-import { degToRad } from '@/utils/utils';
+import { degToRad, radToDeg } from '@/utils/utils';
 
 // ECEF坐标系：地心地固坐标系，简称地心坐标系（Earth-Centered, Earth-Fixed）
 // LLA坐标系：经度（longitude）、纬度（latitude）、高度（altitude）
@@ -103,7 +103,7 @@ class Coord {
     const z = this.matrixReverse[2][0] * e + this.matrixReverse[2][1] * n + this.matrixReverse[2][2] * u + this.centerXyz.z;
 
     const blh = Coord.xyzToBlh(x, y, z);
-    return { lon: blh.L, lat: blh.B, alt: blh.H };
+    return { lon: radToDeg(blh.L), lat: radToDeg(blh.B), alt: blh.H };
   }
 }
 

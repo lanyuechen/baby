@@ -38,6 +38,8 @@ export default class Osm {
     const nodeMap: any = {};
     const buildings: any[] = [];
     const coord = new Coord(center);
+    const a = coord.toEcef(-500, 0);
+    console.log('======', a);
 
     osm.elements.forEach((d: any) => {
       if (d.type === 'node') {
