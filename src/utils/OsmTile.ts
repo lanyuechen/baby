@@ -4,21 +4,25 @@ import Osm from './Osm';
 import Coord, { PointLla } from './Coord';
 
 export default class OsmTile {
+  scene: BABYLON.Scene;
   center: PointLla;
   radius: number;
   tileSize: number;
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
+  rootNode: BABYLON.TransformNode;
 
-  constructor(center: PointLla, tileSize: number) {
+  constructor(center: PointLla, tileSize: number, scene: BABYLON.Scene) {
+    this.scene = scene;
     this.center = center;
     this.tileSize = tileSize;
     this.radius = tileSize / Math.sqrt(2);
     this.coord = new Coord(center);
+    this.rootNode = new BABYLON.TransformNode('tileRoot', scene);
   }
 
-  async createBuildings(scene: BABYLON.Scene) {
+  async createBuildings() {
     const data = await this.fetchDataPixel();
     
     // 创建建筑
@@ -28,23 +32,25 @@ export default class OsmTile {
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
         `building-${d.id}`,
         { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
-        scene,
+        this.scene,
         earcut,
       );
       poly.position.y = d.level;
+      poly.parent = this.rootNode;
     });
 
-    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, scene);
-    const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
+    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, this.scene);
+    const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     ground.material = groundMaterial;
     ground.position.x = 0.5 + this.offsetX;
     ground.position.z = 0.5 + this.offsetY;
+    ground.parent = this.rootNode;
   }
 
   next(offsetX: number, offsetY: number) {
     const point = this.coord.toEcef(this.tileSize * offsetX, this.tileSize * offsetY);
-    const osm = new OsmTile(point, this.tileSize);
+    const osm = new OsmTile(point, this.tileSize, this.scene);
     osm.offsetX = offsetX;
     osm.offsetY = offsetY;
     return osm;

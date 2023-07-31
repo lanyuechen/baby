@@ -24,7 +24,7 @@ export default class {
     return this.scene.onKeyboardObservable.add((info) => {
       switch(info.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
-          this.move(info.event.key);
+          // this.move(info.event.key);
           break;
         case BABYLON.KeyboardEventTypes.KEYUP:
           break;
