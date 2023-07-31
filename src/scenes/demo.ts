@@ -15,11 +15,11 @@ export default class DemoScene {
   
     // 创建相机
     // const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
-    const camera = new BABYLON.ArcRotateCamera('camera2', -Math.PI / 2, Math.PI / 4 * 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('camera2', -Math.PI / 2, Math.PI / 4 * 0, 4, new BABYLON.Vector3(0.5, 0, 0.5), scene);
     // const camera = new BABYLON.UniversalCamera('camera3', new BABYLON.Vector3(0, 1, 1), scene);
 
     // 相机指向原点
-    camera.setTarget(BABYLON.Vector3.Zero());
+    // camera.setTarget(BABYLON.Vector3.Zero());
   
     // 相机固定到画布上
     // camera.attachControl(canvas, true);
@@ -35,6 +35,8 @@ export default class DemoScene {
 
     const tile = new Tile(center, tileSize, scene);
     const player = new Player(scene);
+    player.body.position.x = 0.5;
+    player.body.position.z = 0.5;
 
     // const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
     // const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);

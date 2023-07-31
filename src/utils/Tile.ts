@@ -3,8 +3,8 @@ import OsmTile from '@/utils/OsmTile';
 
 export default class {
   scene: BABYLON.Scene;
-  x: number = 0;
-  y: number = 0;
+  x: number = 0.5;
+  y: number = 0.5;
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
   observer: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
@@ -23,10 +23,14 @@ export default class {
   }
 
   updatetile() {
-    if (this.x > 1) {
-      const tile2 = this.currentOsmTile.next(1, 0);
-      tile2.createBuildings(this.scene);
-      this.osmTiles.push(tile2);
+    const offsetX = Math.ceil(this.x) - 1;
+    const offsetY = Math.ceil(this.y) - 1;
+
+    const tile = this.osmTiles.find(d => d.offsetX === offsetX && d.offsetY === offsetY);
+    if (!tile) {
+      const newTile = this.currentOsmTile.next(offsetX, offsetY);
+      newTile.createBuildings(this.scene);
+      this.osmTiles.push(newTile);
     }
   }
 

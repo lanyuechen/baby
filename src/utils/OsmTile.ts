@@ -7,7 +7,6 @@ export default class OsmTile {
   center: PointLla;
   radius: number;
   tileSize: number;
-  halfTileSize: number;
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
@@ -15,7 +14,6 @@ export default class OsmTile {
   constructor(center: PointLla, tileSize: number) {
     this.center = center;
     this.tileSize = tileSize;
-    this.halfTileSize = tileSize / 2;
     this.radius = tileSize / Math.sqrt(2);
     this.coord = new Coord(center);
   }
@@ -36,12 +34,12 @@ export default class OsmTile {
       poly.position.y = d.level;
     });
 
-    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);
+    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     ground.material = groundMaterial;
-    ground.position.x = this.offsetX * 2;
-    ground.position.z = this.offsetY * 2;
+    ground.position.x = 0.5 + this.offsetX;
+    ground.position.z = 0.5 + this.offsetY;
   }
 
   next(offsetX: number, offsetY: number) {
@@ -70,14 +68,14 @@ export default class OsmTile {
 
         nodeMap[d.id] = {
           ...d,
-          x: enu.e / this.halfTileSize + this.offsetX * 2,
-          y: enu.n / this.halfTileSize + this.offsetY * 2,
+          x: enu.e / this.tileSize + 0.5 + this.offsetX,
+          y: enu.n / this.tileSize + 0.5 + this.offsetY,
         };
       } else if (d.type === 'way') {
         buildings.push({
           ...d,
           nodes: d.nodes.map((id: number) => nodeMap[id]),
-          level: parseInt(d.tags['building:levels'] || '1') * 3 / this.halfTileSize,
+          level: parseInt(d.tags['building:levels'] || '1') * 3 / this.tileSize,
         });
       }
     });
