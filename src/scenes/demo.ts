@@ -31,9 +31,11 @@ export default class DemoScene {
     light.intensity = 0.7;
 
     const center = { lon: 116.3160, lat: 40.0468 };
+    const center2 = { lon: 116.3140, lat: 40.0468 };
     const radius = 500;
 
     new OsmBuilding(center, radius, scene);
+    // new OsmBuilding(center2, radius, scene);
     new Player(scene);
 
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 2, height: 2 }, scene);

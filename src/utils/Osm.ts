@@ -1,4 +1,4 @@
-import { blhToXyz, getTransformMatrix, xyzToEnu } from './transfer';
+import Coord from './Coord';
 
 export default class Osm {
   constructor() {
@@ -37,14 +37,11 @@ export default class Osm {
   async osmToPixel(center: any, radius: number, osm: any) {
     const nodeMap: any = {};
     const buildings: any[] = [];
-    const matrix = getTransformMatrix(center.lon, center.lat);
-
-    const c = blhToXyz(center.lon, center.lat);
+    const coord = new Coord(center);
 
     osm.elements.forEach((d: any) => {
       if (d.type === 'node') {
-        const p = blhToXyz(d.lon, d.lat);
-        const nv = xyzToEnu(matrix, c, p);
+        const nv = coord.toEnu(d.lon, d.lat);
 
         nodeMap[d.id] = {
           ...d,

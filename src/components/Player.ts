@@ -24,13 +24,24 @@ export default class {
     return this.scene.onKeyboardObservable.add((info) => {
       switch(info.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
-          console.log('down', info.event.key);
+          this.move(info.event.key);
           break;
         case BABYLON.KeyboardEventTypes.KEYUP:
-          console.log('up', info.event.key);
           break;
       }
     })
+  }
+
+  move(direction: string) {
+    if (direction === 'ArrowUp') {
+      this.body.position.z += 0.1;
+    } else if (direction === 'ArrowDown') {
+      this.body.position.z -= 0.1;
+    } else if (direction === 'ArrowLeft') {
+      this.body.position.x -= 0.1;
+    } else if (direction === 'ArrowRight') {
+      this.body.position.x += 0.1;
+    }
   }
 
   destroy() {
