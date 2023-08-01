@@ -1,6 +1,7 @@
 import * as BABYLON from 'babylonjs';
 import Player from '@/components/Player';
 import Tile from '@/utils/Tile';
+import WorldBox from '@/utils/WorldBox';
 
 export default class DemoScene {
   scene: BABYLON.Scene;
@@ -35,15 +36,7 @@ export default class DemoScene {
 
     const tile = new Tile(center, tileSize, scene);
     const player = new Player(scene);
-    player.body.position.x = 0;
-    player.body.position.z = 0;
-
-    // const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, scene);
-    // const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', scene);
-    // groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
-    // ground.material = groundMaterial;
-    // ground.position.x = 0.5;
-    // ground.position.z = 0.5;
+    const worldBox = new WorldBox(scene);
     
     return scene;
   }
