@@ -1,13 +1,16 @@
 import * as BABYLON from 'babylonjs';
 
-export default class {
+export default class Player {
   scene: BABYLON.Scene;
-  observer: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
+  speed: number;
+  x: number = 0.5;
+  y: number = 0.5;
+  observer?: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
   body: BABYLON.Mesh;
 
-  constructor(scene: BABYLON.Scene) {
+  constructor(scene: BABYLON.Scene, options: any = {}) {
     this.scene = scene;
-    this.observer = this.addKeyboardEventObserver();
+    this.speed = options.speed || 0.01;
     this.body = this.createPlayer();
   }
 
@@ -17,34 +20,39 @@ export default class {
     boxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 1);
     box.material = boxMaterial;
     box.position.y = 0.1;
+    box.position.x = 0;
+    box.position.z = 0;
     return box;
   }
 
-  addKeyboardEventObserver() {
-    return this.scene.onKeyboardObservable.add((info) => {
+  addKeyboardEventObserver(cb: (player: Player) => void) {
+    this.observer = this.scene.onKeyboardObservable.add((info) => {
       switch(info.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
-          // this.move(info.event.key);
+          this.move(info.event.key);
           break;
         case BABYLON.KeyboardEventTypes.KEYUP:
           break;
       }
-    })
+      cb(this);
+    });
   }
 
   move(direction: string) {
     if (direction === 'ArrowUp') {
-      this.body.position.z += 0.1;
+      this.y += this.speed;
     } else if (direction === 'ArrowDown') {
-      this.body.position.z -= 0.1;
+      this.y -= this.speed;
     } else if (direction === 'ArrowLeft') {
-      this.body.position.x -= 0.1;
+      this.x -= this.speed;
     } else if (direction === 'ArrowRight') {
-      this.body.position.x += 0.1;
+      this.x += this.speed;
     }
   }
 
   destroy() {
-    this.scene.onKeyboardObservable.remove(this.observer);
+    if (this.observer) {
+      this.scene.onKeyboardObservable.remove(this.observer);
+    }
   }
 }

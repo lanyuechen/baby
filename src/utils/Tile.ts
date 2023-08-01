@@ -4,18 +4,14 @@ import OsmTile from '@/utils/OsmTile';
 export default class {
   scene: BABYLON.Scene;
   rootNode: BABYLON.TransformNode;
-  x: number = 0.5;
-  y: number = 0.5;
+  x: number = 0;
+  y: number = 0;
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
-  observer: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
   
-  constructor(center: any, tileSize: number, scene: BABYLON.Scene) {
+  constructor(scene: BABYLON.Scene, center: any, tileSize: number) {
     this.scene = scene;
-    this.observer = this.addKeyboardEventObserver();
     this.rootNode = new BABYLON.TransformNode('rootNode', scene);
-    this.rootNode.position.x = -this.x;
-    this.rootNode.position.z = -this.y;
 
     this.currentOsmTile = new OsmTile(center, tileSize, scene);
     this.currentOsmTile.createTile();
@@ -24,48 +20,37 @@ export default class {
   }
 
   updatetile() {
-    const offsetX = Math.ceil(this.x) - 1;
-    const offsetY = Math.ceil(this.y) - 1;
+    const points = [
+      [this.x - 0.5, this.y + 0.5],
+      [this.x + 0.5, this.y + 0.5],
+      [this.x + 0.5, this.y - 0.5],
+      [this.x - 0.5, this.y - 0.5],
+    ];
+    points.forEach(point => {
+      const offsetX = Math.ceil(point[0]) - 1;
+      const offsetY = Math.ceil(point[1]) - 1;
+      const tile = this.osmTiles.find(d => d.offsetX === offsetX && d.offsetY === offsetY);
 
-    const tile = this.osmTiles.find(d => d.offsetX === offsetX && d.offsetY === offsetY);
-    if (!tile) {
-      const newTile = this.currentOsmTile.next(offsetX, offsetY);
-      newTile.createTile();
-      newTile.rootNode.parent = this.rootNode;
-      this.osmTiles.push(newTile);
-    }
+      if (!tile) {
+        const newTile = this.currentOsmTile.next(offsetX, offsetY);
+        newTile.createTile();
+        newTile.rootNode.parent = this.rootNode;
+        this.osmTiles.push(newTile);
+      }
+    });
   }
 
   clearTiles() {
 
   }
 
-  move(direction: string) {
-    const speed = 0.1;
-    if (direction === 'ArrowUp') {
-      this.y += speed;
-    } else if (direction === 'ArrowDown') {
-      this.y -= speed;
-    } else if (direction === 'ArrowLeft') {
-      this.x -= speed;
-    } else if (direction === 'ArrowRight') {
-      this.x += speed;
-    }
+  update(x: number, y: number) {
+    this.x = x;
+    this.y = y;
 
-    this.rootNode.position.x = -this.x;
-    this.rootNode.position.z = -this.y;
+    this.rootNode.position.x = -x;
+    this.rootNode.position.z = -y;
+
     this.updatetile();
-  }
-
-  addKeyboardEventObserver() {
-    return this.scene.onKeyboardObservable.add((info) => {
-      switch(info.type) {
-        case BABYLON.KeyboardEventTypes.KEYDOWN:
-          this.move(info.event.key);
-          break;
-        case BABYLON.KeyboardEventTypes.KEYUP:
-          break;
-      }
-    })
   }
 }

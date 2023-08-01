@@ -34,9 +34,14 @@ export default class DemoScene {
     const center = { lon: 116.3160, lat: 40.0468 };
     const tileSize = 1000;
 
-    const tile = new Tile(center, tileSize, scene);
+    const tile = new Tile(scene, center, tileSize);
     const player = new Player(scene);
-    const worldBox = new WorldBox(scene);
+
+    tile.update(player.x, player.y);
+    player.addKeyboardEventObserver(() => {
+      tile.update(player.x, player.y);
+    })
+    const worldBox = new WorldBox(scene, 0.4);
     
     return scene;
   }
