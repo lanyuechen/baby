@@ -36,12 +36,12 @@ export default class DemoScene {
 
     const tile = new Tile(scene, center, tileSize);
     const player = new Player(scene);
+    const worldBox = new WorldBox(scene, 0.8);
 
     tile.update(player.x, player.y);
     player.addKeyboardEventObserver(() => {
       tile.update(player.x, player.y);
-    })
-    const worldBox = new WorldBox(scene, 0.4);
+    });
     
     return scene;
   }

@@ -6,6 +6,7 @@ export default class {
   rootNode: BABYLON.TransformNode;
   x: number = 0;
   y: number = 0;
+  preLoadDistance: number = 0.499;  // 防止边界情况一次加载多个瓦片
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
   
@@ -31,10 +32,10 @@ export default class {
 
   updatetile() {
     const points = [
-      [this.x - 0.5, this.y + 0.5],
-      [this.x + 0.5, this.y + 0.5],
-      [this.x + 0.5, this.y - 0.5],
-      [this.x - 0.5, this.y - 0.5],
+      [this.x - this.preLoadDistance, this.y + this.preLoadDistance],
+      [this.x + this.preLoadDistance, this.y + this.preLoadDistance],
+      [this.x + this.preLoadDistance, this.y - this.preLoadDistance],
+      [this.x - this.preLoadDistance, this.y - this.preLoadDistance],
     ];
     points.forEach(point => {
       const offsetX = Math.ceil(point[0]) - 1;
