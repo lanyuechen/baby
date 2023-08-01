@@ -71,6 +71,9 @@ export default class OsmTile {
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, this.scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
+    // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
+    // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+
     ground.material = groundMaterial;
     ground.position.x = 0.5;
     ground.position.z = 0.5;
