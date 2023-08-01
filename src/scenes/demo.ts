@@ -17,12 +17,12 @@ export default class DemoScene {
     // 创建相机
     // const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
     const camera = new BABYLON.ArcRotateCamera('camera2', -Math.PI / 2, Math.PI / 4, 2, new BABYLON.Vector3(0, 0, 0), scene);
-    // const camera = new BABYLON.UniversalCamera('camera3', new BABYLON.Vector3(0, 1, 1), scene);
+    // const camera = new BABYLON.UniversalCamera('camera3', new BABYLON.Vector3(0, 2, -2), scene);
 
     // 相机指向原点
-    // camera.setTarget(BABYLON.Vector3.Zero());
+    camera.setTarget(BABYLON.Vector3.Zero());
   
-    // 相机固定到画布上
+    // 相机控制
     // camera.attachControl(canvas, true);
   
     // 创建一个半球光，朝向天空（0, 1, 0）

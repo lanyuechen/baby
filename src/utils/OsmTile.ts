@@ -25,7 +25,8 @@ export default class OsmTile {
   async createTile() {
     const data = await this.fetchData();
 
-    this.createBuildings(data);
+    this.createRoads(data.filter(d => d.tags.highway));
+    this.createBuildings(data.filter(d => d.tags.building));
     this.createGround();
     
     this.rootNode.position.x = this.offsetX;
@@ -34,7 +35,7 @@ export default class OsmTile {
 
   createBuildings(data: any[]) {
     // 创建建筑
-    console.log('===', data)
+    console.log('building', data)
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
@@ -45,6 +46,24 @@ export default class OsmTile {
       );
       poly.position.y = d.level;
       poly.parent = this.rootNode;
+    });
+  }
+
+  createRoads(data: any[]) {
+    // 创建道路
+    console.log('highway', data)
+    data.forEach(d => {
+      if (d.nodes.length > 2) {
+        const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
+        const line = BABYLON.MeshBuilder.CreateLines(
+          `highway-${d.id}`,
+          {
+            points: vec3,
+          },
+          this.scene,
+        );
+        line.parent = this.rootNode;
+      }
     });
   }
 
