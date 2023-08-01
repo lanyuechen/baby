@@ -19,6 +19,16 @@ export default class {
     this.osmTiles.push(this.currentOsmTile);
   }
 
+  update(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+
+    this.rootNode.position.x = -x;
+    this.rootNode.position.z = -y;
+
+    this.updatetile();
+  }
+
   updatetile() {
     const points = [
       [this.x - 0.5, this.y + 0.5],
@@ -42,15 +52,5 @@ export default class {
 
   clearTiles() {
 
-  }
-
-  update(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-
-    this.rootNode.position.x = -x;
-    this.rootNode.position.z = -y;
-
-    this.updatetile();
   }
 }
