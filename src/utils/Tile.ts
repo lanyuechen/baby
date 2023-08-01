@@ -4,14 +4,16 @@ import OsmTile from '@/utils/OsmTile';
 export default class {
   scene: BABYLON.Scene;
   rootNode: BABYLON.TransformNode;
+  tileSize: number;
   x: number = 0;
   y: number = 0;
-  preLoadDistance: number = 0.499;  // 防止边界情况一次加载多个瓦片
+  preLoadDistance: number = 499;  // 防止边界情况一次加载多个瓦片
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
   
   constructor(scene: BABYLON.Scene, center: any, tileSize: number) {
     this.scene = scene;
+    this.tileSize = tileSize;
     this.rootNode = new BABYLON.TransformNode('rootNode', scene);
 
     this.currentOsmTile = new OsmTile(center, tileSize, scene);
@@ -38,8 +40,8 @@ export default class {
       [this.x - this.preLoadDistance, this.y - this.preLoadDistance],
     ];
     points.forEach(point => {
-      const offsetX = Math.ceil(point[0]) - 1;
-      const offsetY = Math.ceil(point[1]) - 1;
+      const offsetX = Math.ceil(point[0] / this.tileSize) - 1;
+      const offsetY = Math.ceil(point[1] / this.tileSize) - 1;
       const tile = this.osmTiles.find(d => d.offsetX === offsetX && d.offsetY === offsetY);
 
       if (!tile) {

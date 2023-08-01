@@ -29,8 +29,8 @@ export default class OsmTile {
     this.createBuildings(data.filter(d => d.tags.building));
     this.createGround();
     
-    this.rootNode.position.x = this.offsetX;
-    this.rootNode.position.z = this.offsetY;
+    this.rootNode.position.x = this.offsetX * this.tileSize;
+    this.rootNode.position.z = this.offsetY * this.tileSize;
   }
 
   createBuildings(data: any[]) {
@@ -62,21 +62,22 @@ export default class OsmTile {
           },
           this.scene,
         );
+        line.position.y = 0.01;
         line.parent = this.rootNode;
       }
     });
   }
 
   createGround() {
-    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, this.scene);
+    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: this.tileSize, height: this.tileSize }, this.scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
     // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
     ground.material = groundMaterial;
-    ground.position.x = 0.5;
-    ground.position.z = 0.5;
+    ground.position.x = this.tileSize / 2;
+    ground.position.z = this.tileSize / 2;
     ground.parent = this.rootNode;
   }
 
@@ -106,14 +107,14 @@ export default class OsmTile {
 
         nodeMap[d.id] = {
           ...d,
-          x: enu.e / this.tileSize + 0.5,
-          y: enu.n / this.tileSize + 0.5,
+          x: enu.e + this.tileSize / 2,
+          y: enu.n + this.tileSize / 2,
         };
       } else if (d.type === 'way') {
         buildings.push({
           ...d,
           nodes: d.nodes.map((id: number) => nodeMap[id]),
-          level: parseInt(d.tags['building:levels'] || '1') * 3 / this.tileSize,
+          level: parseInt(d.tags['building:levels'] || '1') * 3,
         });
       }
     });

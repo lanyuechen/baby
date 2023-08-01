@@ -16,7 +16,7 @@ export default class DemoScene {
   
     // 创建相机
     // const camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene);
-    const camera = new BABYLON.ArcRotateCamera('camera2', -Math.PI / 2, Math.PI / 4, 2, new BABYLON.Vector3(0, 0, 0), scene);
+    const camera = new BABYLON.ArcRotateCamera('camera2', -Math.PI / 2, Math.PI / 4, 2000, new BABYLON.Vector3(0, 0, 0), scene);
     // const camera = new BABYLON.UniversalCamera('camera3', new BABYLON.Vector3(0, 2, -2), scene);
 
     // 相机指向原点
@@ -24,8 +24,8 @@ export default class DemoScene {
   
     // 相机控制
     camera.attachControl(canvas, true);
-    camera.lowerRadiusLimit = 1.5;
-    camera.upperRadiusLimit = 4;
+    camera.lowerRadiusLimit = 1000;
+    camera.upperRadiusLimit = 4000;
     camera.lowerBetaLimit = 0;
     camera.upperBetaLimit = Math.PI / 2;
   
@@ -40,7 +40,7 @@ export default class DemoScene {
 
     const tile = new Tile(scene, center, tileSize);
     const player = new Player(scene);
-    const worldBox = new WorldBox(scene, 0.8);
+    const worldBox = new WorldBox(scene, 800);
 
     tile.update(player.x, player.y);
     player.addKeyboardEventObserver(() => {

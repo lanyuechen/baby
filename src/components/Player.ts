@@ -3,23 +3,23 @@ import * as BABYLON from 'babylonjs';
 export default class Player {
   scene: BABYLON.Scene;
   speed: number;
-  x: number = 0.5;
-  y: number = 0.5;
+  x: number = 500;
+  y: number = 500;
   observer?: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
   body: BABYLON.Mesh;
 
   constructor(scene: BABYLON.Scene, options: any = {}) {
     this.scene = scene;
-    this.speed = options.speed || 0.01;
+    this.speed = options.speed || 10;
     this.body = this.createPlayer();
   }
 
   createPlayer() {
-    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 0.02 }, this.scene);
+    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 20 }, this.scene);
     const boxMaterial = new BABYLON.StandardMaterial('playerMaterial', this.scene);
     boxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 1);
     box.material = boxMaterial;
-    box.position.y = 0.1;
+    box.position.y = 100;
     box.position.x = 0;
     box.position.z = 0;
     return box;
