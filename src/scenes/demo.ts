@@ -26,6 +26,8 @@ export default class DemoScene {
     camera.attachControl(canvas, true);
     camera.lowerRadiusLimit = 1.5;
     camera.upperRadiusLimit = 4;
+    camera.lowerBetaLimit = 0;
+    camera.upperBetaLimit = Math.PI / 2;
   
     // 创建一个半球光，朝向天空（0, 1, 0）
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 1), scene);
