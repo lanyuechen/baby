@@ -14,9 +14,11 @@ export default class {
     this.scene = scene;
     this.observer = this.addKeyboardEventObserver();
     this.rootNode = new BABYLON.TransformNode('rootNode', scene);
+    this.rootNode.position.x = -this.x;
+    this.rootNode.position.z = -this.y;
 
     this.currentOsmTile = new OsmTile(center, tileSize, scene);
-    this.currentOsmTile.createBuildings();
+    this.currentOsmTile.createTile();
     this.currentOsmTile.rootNode.parent = this.rootNode;
     this.osmTiles.push(this.currentOsmTile);
   }
@@ -28,7 +30,7 @@ export default class {
     const tile = this.osmTiles.find(d => d.offsetX === offsetX && d.offsetY === offsetY);
     if (!tile) {
       const newTile = this.currentOsmTile.next(offsetX, offsetY);
-      newTile.createBuildings();
+      newTile.createTile();
       newTile.rootNode.parent = this.rootNode;
       this.osmTiles.push(newTile);
     }
@@ -50,8 +52,8 @@ export default class {
       this.x += speed;
     }
 
-    this.rootNode.position.x = -(this.x - 0.5);
-    this.rootNode.position.z = -(this.y - 0.5);
+    this.rootNode.position.x = -this.x;
+    this.rootNode.position.z = -this.y;
     this.updatetile();
   }
 

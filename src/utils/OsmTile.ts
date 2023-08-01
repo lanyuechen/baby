@@ -22,9 +22,17 @@ export default class OsmTile {
     this.rootNode = new BABYLON.TransformNode('tileRoot', scene);
   }
 
-  async createBuildings() {
-    const data = await this.fetchDataPixel();
+  async createTile() {
+    const data = await this.fetchData();
+
+    this.createBuildings(data);
+    this.createGround();
     
+    this.rootNode.position.x = this.offsetX;
+    this.rootNode.position.z = this.offsetY;
+  }
+
+  createBuildings(data: any[]) {
     // 创建建筑
     console.log('===', data)
     data.forEach(d => {
@@ -38,13 +46,15 @@ export default class OsmTile {
       poly.position.y = d.level;
       poly.parent = this.rootNode;
     });
+  }
 
+  createGround() {
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1, height: 1 }, this.scene);
     const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     ground.material = groundMaterial;
-    ground.position.x = 0.5 + this.offsetX;
-    ground.position.z = 0.5 + this.offsetY;
+    ground.position.x = 0.5;
+    ground.position.z = 0.5;
     ground.parent = this.rootNode;
   }
 
@@ -56,14 +66,14 @@ export default class OsmTile {
     return osm;
   }
 
-  async fetchDataPixel() {
+  private async fetchData() {
     const osmData = await Osm.fetchData(this.center, this.radius);
-    const data = await this.osmToPixel(osmData);
+    const data = this.osmToEnu(osmData);
   
     return data;
   }
 
-  async osmToPixel(osmData: any) {
+  private osmToEnu(osmData: any) {
     const nodeMap: any = {};
     const buildings: any[] = [];
     const coord = new Coord(this.center);
@@ -74,8 +84,8 @@ export default class OsmTile {
 
         nodeMap[d.id] = {
           ...d,
-          x: enu.e / this.tileSize + 0.5 + this.offsetX,
-          y: enu.n / this.tileSize + 0.5 + this.offsetY,
+          x: enu.e / this.tileSize + 0.5,
+          y: enu.n / this.tileSize + 0.5,
         };
       } else if (d.type === 'way') {
         buildings.push({
