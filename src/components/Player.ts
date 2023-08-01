@@ -39,13 +39,13 @@ export default class Player {
   }
 
   move(direction: string) {
-    if (direction === 'ArrowUp') {
+    if (direction === 'w') {
       this.y += this.speed;
-    } else if (direction === 'ArrowDown') {
+    } else if (direction === 's') {
       this.y -= this.speed;
-    } else if (direction === 'ArrowLeft') {
+    } else if (direction === 'a') {
       this.x -= this.speed;
-    } else if (direction === 'ArrowRight') {
+    } else if (direction === 'd') {
       this.x += this.speed;
     }
   }
