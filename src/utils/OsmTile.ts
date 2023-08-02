@@ -3,20 +3,28 @@ import earcut from 'earcut';
 import Osm from './Osm';
 import Coord, { PointLla } from './Coord';
 
+type OsmTileOptions = {
+  center: any;
+  tileSize: number;
+  shadowGenerator?: BABYLON.ShadowGenerator;
+}
+
 export default class OsmTile {
   scene: BABYLON.Scene;
   center: PointLla;
   radius: number;
   tileSize: number;
+  shadowGenerator?: BABYLON.ShadowGenerator;
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
   rootNode: BABYLON.TransformNode;
 
-  constructor(center: PointLla, tileSize: number, scene: BABYLON.Scene) {
+  constructor(scene: BABYLON.Scene, { center, tileSize, shadowGenerator }: OsmTileOptions) {
     this.scene = scene;
     this.center = center;
     this.tileSize = tileSize;
+    this.shadowGenerator = shadowGenerator;
     this.radius = tileSize / Math.sqrt(2);
     this.coord = new Coord(center);
     this.rootNode = new BABYLON.TransformNode('tileRoot', scene);
@@ -36,6 +44,10 @@ export default class OsmTile {
   createBuildings(data: any[]) {
     // 创建建筑
     console.log('building', data)
+    const shadowMap = this.shadowGenerator?.getShadowMap();
+    if (shadowMap) {
+      shadowMap.refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME;
+    }
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
@@ -46,7 +58,11 @@ export default class OsmTile {
       );
       poly.position.y = d.level;
       poly.parent = this.rootNode;
+      shadowMap?.renderList?.push(poly);
     });
+    if (shadowMap) {
+      shadowMap.refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME;
+    }
   }
 
   createHighways(data: any[]) {
@@ -79,14 +95,19 @@ export default class OsmTile {
     ground.position.x = this.tileSize / 2;
     ground.position.z = this.tileSize / 2;
     ground.parent = this.rootNode;
+    ground.receiveShadows = true;
   }
 
   next(offsetX: number, offsetY: number) {
     const point = this.coord.toEcef(this.tileSize * offsetX, this.tileSize * offsetY);
-    const osm = new OsmTile(point, this.tileSize, this.scene);
-    osm.offsetX = offsetX;
-    osm.offsetY = offsetY;
-    return osm;
+    const osmTile = new OsmTile(this.scene, {
+      center: point,
+      tileSize: this.tileSize,
+      shadowGenerator: this.shadowGenerator,
+    });
+    osmTile.offsetX = offsetX;
+    osmTile.offsetY = offsetY;
+    return osmTile;
   }
 
   dispose() {

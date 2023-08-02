@@ -1,7 +1,8 @@
 import * as BABYLON from 'babylonjs';
 import Player from '@/components/Player';
+import Sun from '@/components/Sun';
+import WorldBox from '@/components/WorldBox';
 import Tile from '@/utils/Tile';
-import WorldBox from '@/utils/WorldBox';
 
 const center = { lon: 116.3160, lat: 40.0468 };
 const tileSize = 1000;
@@ -44,9 +45,19 @@ export default class DemoScene {
     // 灯光强度
     light.intensity = 0.7;
 
-    const tile = new Tile(scene, center, tileSize);
-    const player = new Player(scene);
     const worldBox = new WorldBox(scene, tileSize * 0.6);
+    worldBox.setBoundary();
+    const sun = new Sun(scene, {
+      world: worldBox,
+      center,
+    });
+
+    const player = new Player(scene);
+    const tile = new Tile(scene, {
+      center,
+      tileSize,
+      shadowGenerator: sun.shadowGenerator,
+    });
 
     tile.update(player.x, player.y);
     player.addKeyboardEventObserver(() => {

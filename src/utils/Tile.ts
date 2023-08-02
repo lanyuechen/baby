@@ -1,6 +1,12 @@
 import * as BABYLON from 'babylonjs';
 import OsmTile from '@/utils/OsmTile';
 
+type TileOptions = {
+  center: any;
+  tileSize: number;
+  shadowGenerator?: BABYLON.ShadowGenerator;
+}
+
 export default class {
   scene: BABYLON.Scene;
   rootNode: BABYLON.TransformNode;
@@ -11,12 +17,12 @@ export default class {
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
   
-  constructor(scene: BABYLON.Scene, center: any, tileSize: number) {
+  constructor(scene: BABYLON.Scene, { center, tileSize, shadowGenerator }: TileOptions) {
     this.scene = scene;
     this.tileSize = tileSize;
     this.rootNode = new BABYLON.TransformNode('rootNode', scene);
 
-    this.currentOsmTile = new OsmTile(center, tileSize, scene);
+    this.currentOsmTile = new OsmTile(scene, { center, tileSize, shadowGenerator });
     this.currentOsmTile.createTile();
     this.currentOsmTile.rootNode.parent = this.rootNode;
     this.osmTiles.push(this.currentOsmTile);

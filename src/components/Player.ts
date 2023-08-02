@@ -30,11 +30,11 @@ export default class Player {
       switch(info.type) {
         case BABYLON.KeyboardEventTypes.KEYDOWN:
           this.move(info.event.key);
+          cb(this);
           break;
         case BABYLON.KeyboardEventTypes.KEYUP:
           break;
       }
-      cb(this);
     });
   }
 
