@@ -51,9 +51,18 @@ export default class {
         this.osmTiles.push(newTile);
       }
     });
+    this.clearTiles();
   }
 
   clearTiles() {
-
+    const offsetX = Math.ceil(this.x / this.tileSize) - 1;
+    const offsetY = Math.ceil(this.y / this.tileSize) - 1;
+    this.osmTiles = this.osmTiles.filter(d => {
+      if (Math.abs(d.offsetX - offsetX) < 2 && Math.abs(d.offsetY - offsetY) < 2) {
+        return true;
+      }
+      // 移除瓦片
+      d.dispose();
+    });
   }
 }

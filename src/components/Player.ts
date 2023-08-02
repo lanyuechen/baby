@@ -15,7 +15,7 @@ export default class Player {
   }
 
   createPlayer() {
-    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 20 }, this.scene);
+    const box = BABYLON.MeshBuilder.CreateBox('player', { size: 10 }, this.scene);
     const boxMaterial = new BABYLON.StandardMaterial('playerMaterial', this.scene);
     boxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 1);
     box.material = boxMaterial;

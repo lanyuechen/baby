@@ -25,7 +25,7 @@ export default class OsmTile {
   async createTile() {
     const data = await this.fetchData();
 
-    this.createRoads(data.filter(d => d.tags.highway));
+    this.createHighways(data.filter(d => d.tags.highway));
     this.createBuildings(data.filter(d => d.tags.building));
     this.createGround();
     
@@ -49,7 +49,7 @@ export default class OsmTile {
     });
   }
 
-  createRoads(data: any[]) {
+  createHighways(data: any[]) {
     // 创建道路
     console.log('highway', data)
     data.forEach(d => {
@@ -62,7 +62,7 @@ export default class OsmTile {
           },
           this.scene,
         );
-        line.position.y = 0.01;
+        line.position.y = 0.1;
         line.parent = this.rootNode;
       }
     });
@@ -87,6 +87,10 @@ export default class OsmTile {
     osm.offsetX = offsetX;
     osm.offsetY = offsetY;
     return osm;
+  }
+
+  dispose() {
+    this.rootNode.dispose(false, true);
   }
 
   private async fetchData() {
