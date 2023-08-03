@@ -43,18 +43,28 @@ export default class Player {
   }
 
   move(direction: string) {
+    let displacement;
     if (direction === 'w') {
-      this.body.moveWithCollisions(new BABYLON.Vector3(0, 0, this.speed));
+      displacement = new BABYLON.Vector3(0, 0, this.speed);
     } else if (direction === 's') {
-      this.body.moveWithCollisions(new BABYLON.Vector3(0, 0, -this.speed));
+      displacement = new BABYLON.Vector3(0, 0, -this.speed);
     } else if (direction === 'a') {
-      this.body.moveWithCollisions(new BABYLON.Vector3(-this.speed, 0, 0));
+      displacement = new BABYLON.Vector3(-this.speed, 0, 0);
     } else if (direction === 'd') {
-      this.body.moveWithCollisions(new BABYLON.Vector3(this.speed, 0, 0));
+      displacement = new BABYLON.Vector3(this.speed, 0, 0);
+    } else if (direction === 'u') {
+      displacement = new BABYLON.Vector3(0, this.speed, 0);
+    } else if (direction === 'j') {
+      displacement = new BABYLON.Vector3(0, -this.speed, 0);
     }
+    
+    if (displacement) {
+      const { x, y, z } = this.body.moveWithCollisions(displacement).position;
 
-    this.x = this.body.position.x;
-    this.z = this.body.position.z;
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
 
   destroy() {

@@ -19,32 +19,12 @@ export default class DemoScene {
     const scene = new BABYLON.Scene(engine);
   
     // 创建相机
-    const camera = new BABYLON.ArcRotateCamera(
-      'camera',
-      -Math.PI / 2,
-      Math.PI / 4,
-      tileSize,
-      new BABYLON.Vector3(0, 0, 0),
-      scene,
-    );
-
-    // 相机指向原点
-    camera.setTarget(BABYLON.Vector3.Zero());
-  
-    // 相机控制
-    camera.attachControl(canvas, true);
-    camera.lowerRadiusLimit = tileSize * 0.8;
-    camera.upperRadiusLimit = tileSize * 2;
-    camera.lowerBetaLimit = 0.001;  // 设置为0会导致α旋转时方向错乱
-    camera.upperBetaLimit = Math.PI / 2;
-    camera.wheelPrecision = 0.3;
+    const camera = this.createCamera(scene, canvas);
   
     // 创建一个半球光，朝向天空（0, 1, 0）
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.5;  // 灯光强度
   
-    // 灯光强度
-    light.intensity = 0.5;
-
     const world = new World(scene, tileSize * 0.6);
     world.setBoundary();
     const sun = new Sun(scene, {
@@ -67,5 +47,29 @@ export default class DemoScene {
     player.body.checkCollisions = true;
     
     return scene;
+  }
+
+  createCamera(scene: BABYLON.Scene, canvas: HTMLCanvasElement) {
+    const camera = new BABYLON.ArcRotateCamera(
+      'camera',
+      -Math.PI / 2,
+      Math.PI / 4,
+      tileSize,
+      new BABYLON.Vector3(0, 0, 0),
+      scene,
+    );
+
+    // 相机指向原点
+    camera.setTarget(BABYLON.Vector3.Zero());
+  
+    // 相机控制
+    camera.attachControl(canvas, true);
+    camera.lowerRadiusLimit = tileSize * 0.8;
+    camera.upperRadiusLimit = tileSize * 2;
+    camera.lowerBetaLimit = 0.001;  // 设置为0会导致α旋转时方向错乱
+    camera.upperBetaLimit = Math.PI / 2;
+    camera.wheelPrecision = 0.3;
+
+    return camera;
   }
 }
