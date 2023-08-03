@@ -9,6 +9,8 @@ type SunOptions = {
   date?: Date;
 };
 
+const LIGHT_INTENSITY = 0.6;
+
 export default class Sun {
   scene: BABYLON.Scene;
   center: any;
@@ -82,7 +84,7 @@ export default class Sun {
     if (y + this.sunSize / 2 < 0) {
       this.light.intensity = 0;
     } else {
-      this.light.intensity = 1;
+      this.light.intensity = LIGHT_INTENSITY;
     }
     this.light.position = new BABYLON.Vector3(x, y, z);
     this.light.direction = new BABYLON.Vector3(-x, -y, -z);
@@ -92,6 +94,7 @@ export default class Sun {
   createLight() {
     const light = new BABYLON.DirectionalLight('directionalLight', new BABYLON.Vector3(0, 0, 0), this.scene);
     // light.autoUpdateExtends = false;
+    light.intensity = LIGHT_INTENSITY;
     return light;
   }
 

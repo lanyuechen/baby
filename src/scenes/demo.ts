@@ -43,7 +43,7 @@ export default class DemoScene {
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 1), scene);
   
     // 灯光强度
-    light.intensity = 0.7;
+    light.intensity = 0.5;
 
     const worldBox = new WorldBox(scene, tileSize * 0.6);
     worldBox.setBoundary();

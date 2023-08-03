@@ -43,11 +43,7 @@ export default class OsmTile {
 
   createBuildings(data: any[]) {
     // 创建建筑
-    console.log('building', data)
-    const shadowMap = this.shadowGenerator?.getShadowMap();
-    if (shadowMap) {
-      shadowMap.refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME;
-    }
+    console.log('building', data);
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
@@ -58,11 +54,8 @@ export default class OsmTile {
       );
       poly.position.y = d.level;
       poly.parent = this.rootNode;
-      shadowMap?.renderList?.push(poly);
+      this.shadowGenerator?.addShadowCaster(poly);
     });
-    if (shadowMap) {
-      shadowMap.refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYFRAME;
-    }
   }
 
   createHighways(data: any[]) {
