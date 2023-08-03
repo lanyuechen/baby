@@ -1,10 +1,10 @@
 import * as BABYLON from 'babylonjs';
 
 import { degToRad } from '@/utils/utils';
-import WorldBox from '@/components/WorldBox';
+import World from '@/components/World';
 
 type SunOptions = {
-  world?: WorldBox;
+  world?: World;
   center: any;
   date?: Date;
 };
@@ -32,6 +32,7 @@ export default class Sun {
     
     this.light = this.createLight();
     this.lightSphere = this.createLightSphere();
+    this.light.excludedMeshes.push(this.lightSphere);
     this.shadowGenerator = this.createShadowGenerator(this.light);
     this.updateLight();
     this.addKeyboardEventObserver();

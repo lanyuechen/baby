@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
 import Player from '@/components/Player';
 import Sun from '@/components/Sun';
-import WorldBox from '@/components/WorldBox';
+import World from '@/components/World';
 import Tile from '@/utils/Tile';
 
 const center = { lon: 116.3160, lat: 40.0468 };
@@ -40,17 +40,19 @@ export default class DemoScene {
     camera.wheelPrecision = 0.3;
   
     // 创建一个半球光，朝向天空（0, 1, 0）
-    const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(1, 1, 1), scene);
+    const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
   
     // 灯光强度
     light.intensity = 0.5;
 
-    const worldBox = new WorldBox(scene, tileSize * 0.6);
-    worldBox.setBoundary();
+    const world = new World(scene, tileSize * 0.6);
+    world.setBoundary();
     const sun = new Sun(scene, {
-      world: worldBox,
+      world,
       center,
     });
+
+    light.excludedMeshes.push(sun.lightSphere);
 
     const player = new Player(scene);
     const tile = new Tile(scene, {
