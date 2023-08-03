@@ -52,6 +52,7 @@ export default class OsmTile {
         this.scene,
         earcut,
       );
+      poly.checkCollisions = true;  // 开启碰撞检测
       poly.position.y = d.level;
       poly.parent = this.rootNode;
       this.shadowGenerator?.addShadowCaster(poly);
@@ -84,6 +85,7 @@ export default class OsmTile {
     // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
     // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
+    ground.checkCollisions = true;  // 开启碰撞检测
     ground.material = groundMaterial;
     ground.position.x = this.tileSize / 2;
     ground.position.z = this.tileSize / 2;

@@ -4,7 +4,8 @@ export default class Player {
   scene: BABYLON.Scene;
   speed: number;
   x: number = 500;
-  y: number = 500;
+  y: number = 100;
+  z: number = 500;
   observer?: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
   body: BABYLON.Mesh;
 
@@ -19,9 +20,12 @@ export default class Player {
     const boxMaterial = new BABYLON.StandardMaterial('playerMaterial', this.scene);
     boxMaterial.diffuseColor = new BABYLON.Color3(1, 0, 1);
     box.material = boxMaterial;
-    box.position.y = 100;
-    box.position.x = 0;
-    box.position.z = 0;
+    box.position.x = this.x;
+    box.position.y = this.y;
+    box.position.z = this.z;
+    box.ellipsoid = new BABYLON.Vector3(10, 10, 10);
+    box.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+    box.checkCollisions = true; // 开启碰撞检测
     return box;
   }
 
@@ -40,14 +44,17 @@ export default class Player {
 
   move(direction: string) {
     if (direction === 'w') {
-      this.y += this.speed;
+      this.body.moveWithCollisions(new BABYLON.Vector3(0, 0, this.speed));
     } else if (direction === 's') {
-      this.y -= this.speed;
+      this.body.moveWithCollisions(new BABYLON.Vector3(0, 0, -this.speed));
     } else if (direction === 'a') {
-      this.x -= this.speed;
+      this.body.moveWithCollisions(new BABYLON.Vector3(-this.speed, 0, 0));
     } else if (direction === 'd') {
-      this.x += this.speed;
+      this.body.moveWithCollisions(new BABYLON.Vector3(this.speed, 0, 0));
     }
+
+    this.x = this.body.position.x;
+    this.z = this.body.position.z;
   }
 
   destroy() {

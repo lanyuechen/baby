@@ -58,13 +58,13 @@ export default class DemoScene {
     const tile = new Tile(scene, {
       center,
       tileSize,
+      player,
       shadowGenerator: sun.shadowGenerator,
     });
 
-    tile.update(player.x, player.y);
-    player.addKeyboardEventObserver(() => {
-      tile.update(player.x, player.y);
-    });
+    // 碰撞检测
+    scene.collisionsEnabled = true;
+    player.body.checkCollisions = true;
     
     return scene;
   }
