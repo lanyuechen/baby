@@ -1,6 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import earcut from 'earcut';
-import World from '@/components/World';
+import Boundary from '@/components/Boundary';
 import Osm from './Osm';
 import Coord, { PointLla } from './Coord';
 import Sun from '@/components/Sun';
@@ -8,7 +8,7 @@ import Sun from '@/components/Sun';
 type OsmTileOptions = {
   center: any;
   tileSize: number;
-  world: World;
+  boundary: Boundary;
   sun: Sun;
   shadowGenerator?: BABYLON.ShadowGenerator;
 }
@@ -18,17 +18,17 @@ export default class OsmTile {
   center: PointLla;
   radius: number;
   tileSize: number;
-  world: World;
+  boundary: Boundary;
   sun: Sun;
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
   rootNode: BABYLON.TransformNode;
 
-  constructor(scene: BABYLON.Scene, { center, tileSize, world, sun }: OsmTileOptions) {
+  constructor(scene: BABYLON.Scene, { center, tileSize, boundary, sun }: OsmTileOptions) {
     this.scene = scene;
     this.center = center;
-    this.world = world;
+    this.boundary = boundary;
     this.sun = sun;
     this.tileSize = tileSize;
     this.sun = sun;
@@ -52,7 +52,7 @@ export default class OsmTile {
     // 创建建筑
     console.log('building', data);
     const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
-    this.world.setBoundary(material);
+    this.boundary.setBoundary(material);
 
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
@@ -75,7 +75,7 @@ export default class OsmTile {
     console.log('highway', data);
     const material = new BABYLON.StandardMaterial('highwayMaterial', this.scene);
     material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    this.world.setBoundary(material);
+    this.boundary.setBoundary(material);
 
     data.forEach(d => {
       if (d.nodes.length > 2) {
@@ -100,7 +100,7 @@ export default class OsmTile {
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
     // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    this.world.setBoundary(groundMaterial);
+    this.boundary.setBoundary(groundMaterial);
 
     ground.checkCollisions = true;  // 开启碰撞检测
     ground.material = groundMaterial;
@@ -115,7 +115,7 @@ export default class OsmTile {
     const osmTile = new OsmTile(this.scene, {
       center: point,
       tileSize: this.tileSize,
-      world: this.world,
+      boundary: this.boundary,
       sun: this.sun,
     });
     osmTile.offsetX = offsetX;
