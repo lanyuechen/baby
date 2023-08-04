@@ -4,9 +4,9 @@ import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
 
-// const center = { lon: 116.3160, lat: 40.0468 };  // 清河
+const center = { lon: 116.3160, lat: 40.0468 };  // 清河
 // const center = { lon: 116.3908, lat: 39.9148 }; // 故宫
-const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
+// const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 const tileSize = 1000;
 
 export default class WorldScene {

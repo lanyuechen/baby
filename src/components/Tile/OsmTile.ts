@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import earcut from 'earcut';
+import { getPolygonDirection } from '@/utils/utils';
 import Boundary from '@/components/Boundary';
 import Sun from '@/components/Sun';
 import Osm from './Osm';
@@ -56,10 +57,15 @@ export default class OsmTile {
     this.boundary.setBoundary(material);
 
     data.forEach(d => {
+      const direction = getPolygonDirection(d.nodes);
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
         `building-${d.id}`,
-        { shape: vec3, depth: d.level, sideOrientation: BABYLON.Mesh.DOUBLESIDE },
+        {
+          shape: direction ? vec3 : vec3.reverse(),
+          depth: d.level,
+          sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+        },
         this.scene,
         earcut,
       );
