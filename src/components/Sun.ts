@@ -12,15 +12,15 @@ const LIGHT_INTENSITY = 0.6;
 export default class Sun {
   scene: BABYLON.Scene;
   center: any;
-  radius: number = 400;
-  speed: number = 30; // 分钟
-  sunSize: number = 40;
+  trackRadius: number = 400;    // 太阳轨道半径
+  sunRadius: number = 20;       // 太阳半径
+  speed: number = 30;           // 分钟
   light: BABYLON.DirectionalLight;
   body: BABYLON.Mesh;
   shadowGenerator: BABYLON.ShadowGenerator;
   observer?: BABYLON.Nullable<BABYLON.Observer<BABYLON.KeyboardInfo>>;
-  day: number = 1; // 1 ~ 365
-  time: number = 0;
+  day: number = 1;              // 1 ~ 365
+  time: number = 0;             // 0 ~ 1440
 
   constructor(scene: BABYLON.Scene, { center, date }: SunOptions) {
     this.scene = scene;
@@ -84,8 +84,8 @@ export default class Sun {
   }
 
   updateLight() {
-    const { x, y, z } = Sun.getTrack(this.center.lon, this.center.lat, this.radius, this.day, this.time);
-    if (y + this.sunSize / 2 < 0) {
+    const { x, y, z } = Sun.getTrack(this.center.lon, this.center.lat, this.trackRadius, this.day, this.time);
+    if (y + this.sunRadius < 0) {
       this.light.intensity = 0;
     } else {
       this.light.intensity = LIGHT_INTENSITY;
@@ -121,7 +121,7 @@ export default class Sun {
     const coreSphere = BABYLON.MeshBuilder.CreateSphere(
       'coreSphere',
       {
-        diameter: 2.01 * this.sunSize / 2,
+        diameter: 2.01 * this.sunRadius,
         segments: 64,
       },
       this.scene,
@@ -156,7 +156,7 @@ export default class Sun {
   
     // Where the sun particles come from
     const sunEmitter = new BABYLON.SphereParticleEmitter();
-    sunEmitter.radius = this.sunSize / 2;
+    sunEmitter.radius = this.sunRadius;
     sunEmitter.radiusRange = 0; // emit only from shape surface
   
     // Assign particles to emitters
@@ -184,18 +184,18 @@ export default class Sun {
     coronaParticles.addColorGradient(1.0, new BABYLON.Color4(0.3207, 0.0713, 0.0075, 0.0));
   
     // Size of each particle (random between...
-    surfaceParticles.minSize = 0.4 * this.sunSize / 2;
-    surfaceParticles.maxSize = 0.7 * this.sunSize / 2;
+    surfaceParticles.minSize = 0.4 * this.sunRadius;
+    surfaceParticles.maxSize = 0.7 * this.sunRadius;
   
-    flareParticles.minScaleX = 0.5 * this.sunSize / 2;
-    flareParticles.minScaleY = 0.5 * this.sunSize / 2;
-    flareParticles.maxScaleX= 1.0 * this.sunSize / 2;
-    flareParticles.maxScaleY = 1.0 * this.sunSize / 2;
+    flareParticles.minScaleX = 0.5 * this.sunRadius;
+    flareParticles.minScaleY = 0.5 * this.sunRadius;
+    flareParticles.maxScaleX= 1.0 * this.sunRadius;
+    flareParticles.maxScaleY = 1.0 * this.sunRadius;
 
-    coronaParticles.minScaleX = 0.5 * this.sunSize / 2;
-    coronaParticles.minScaleY = 0.75 * this.sunSize / 2;
-    coronaParticles.maxScaleX = 1.2 * this.sunSize / 2;
-    coronaParticles.maxScaleY = 3.0 * this.sunSize / 2;
+    coronaParticles.minScaleX = 0.5 * this.sunRadius;
+    coronaParticles.minScaleY = 0.75 * this.sunRadius;
+    coronaParticles.maxScaleX = 1.2 * this.sunRadius;
+    coronaParticles.maxScaleY = 3.0 * this.sunRadius;
   
     // Size over lifetime
     flareParticles.addSizeGradient(0, 0);

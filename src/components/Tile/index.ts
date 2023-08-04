@@ -7,7 +7,7 @@ type TileOptions = {
   center: any;
   tileSize: number;
   boundary: Boundary;
-  sun: Sun;
+  sun?: Sun;
 }
 
 export default class {

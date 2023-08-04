@@ -4,7 +4,9 @@ import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
 
-const center = { lon: 116.3160, lat: 40.0468 };
+// const center = { lon: 116.3160, lat: 40.0468 };  // 清河
+// const center = { lon: 116.3908, lat: 39.9148 }; // 故宫
+const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 const tileSize = 1000;
 
 export default class WorldScene {
@@ -12,7 +14,7 @@ export default class WorldScene {
   camera: BABYLON.Camera;
   player: Player;
   tile: Tile;
-  sun: Sun;
+  sun?: Sun;
   boundary: Boundary;
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
@@ -20,13 +22,14 @@ export default class WorldScene {
     this.camera = this.createCamera(this.scene, canvas);
 
     this.boundary = new Boundary(this.scene, tileSize * 0.6);
-    this.player = new Player(this.scene);
     this.sun = new Sun(this.scene, { center });
 
     // 创建一个半球光，朝向天空（0, 1, 0）
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
     light.intensity = 0.5;  // 灯光强度
-    light.excludedMeshes.push(this.sun.body);
+    if (this.sun) {
+      light.excludedMeshes.push(this.sun.body);
+    }
 
     this.tile = new Tile(this.scene, {
       center,
@@ -34,6 +37,8 @@ export default class WorldScene {
       boundary: this.boundary,
       sun: this.sun,
     });
+
+    this.player = new Player(this.scene);
 
     this.player.body.parent = this.tile.rootNode;
 

@@ -23,6 +23,18 @@ export default class Osm {
       (
         way(around:${radius},${center.lat},${center.lon})["building"];>;
         way(around:${radius},${center.lat},${center.lon})["highway"];>;
+        way(around:${radius},${center.lat},${center.lon})["natural"="water"];>;
+      );
+      out body;
+    `);
+  }
+
+  static fetchWaterData(center: any, radius: number) {
+    return this.fetchApi(`
+      [out:json];
+      (
+        way(around:${radius},${center.lat},${center.lon})["natural"="water"];
+        >;
       );
       out body;
     `);
