@@ -1,9 +1,9 @@
 import * as BABYLON from 'babylonjs';
 import earcut from 'earcut';
 import Boundary from '@/components/Boundary';
+import Sun from '@/components/Sun';
 import Osm from './Osm';
 import Coord, { PointLla } from './Coord';
-import Sun from '@/components/Sun';
 
 type OsmTileOptions = {
   center: any;

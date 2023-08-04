@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
-import OsmTile from '@/utils/OsmTile';
 import Boundary from '@/components/Boundary';
 import Sun from '@/components/Sun';
+import OsmTile from './OsmTile';
 
 type TileOptions = {
   center: any;

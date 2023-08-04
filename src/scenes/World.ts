@@ -2,7 +2,7 @@ import * as BABYLON from 'babylonjs';
 import Player from '@/components/Player';
 import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
-import Tile from '@/utils/Tile';
+import Tile from '@/components/Tile';
 
 const center = { lon: 116.3160, lat: 40.0468 };
 const tileSize = 1000;
