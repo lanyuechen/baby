@@ -13,7 +13,7 @@ export default class Sun {
   scene: BABYLON.Scene;
   center: any;
   trackRadius: number = 400;    // 太阳轨道半径
-  sunRadius: number = 20;       // 太阳半径
+  sunRadius: number = 30;       // 太阳半径
   speed: number = 30;           // 分钟
   light: BABYLON.DirectionalLight;
   body: BABYLON.Mesh;
