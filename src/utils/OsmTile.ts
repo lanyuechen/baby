@@ -1,11 +1,15 @@
 import * as BABYLON from 'babylonjs';
 import earcut from 'earcut';
+import World from '@/components/World';
 import Osm from './Osm';
 import Coord, { PointLla } from './Coord';
+import Sun from '@/components/Sun';
 
 type OsmTileOptions = {
   center: any;
   tileSize: number;
+  world: World;
+  sun: Sun;
   shadowGenerator?: BABYLON.ShadowGenerator;
 }
 
@@ -14,17 +18,20 @@ export default class OsmTile {
   center: PointLla;
   radius: number;
   tileSize: number;
-  shadowGenerator?: BABYLON.ShadowGenerator;
+  world: World;
+  sun: Sun;
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
   rootNode: BABYLON.TransformNode;
 
-  constructor(scene: BABYLON.Scene, { center, tileSize, shadowGenerator }: OsmTileOptions) {
+  constructor(scene: BABYLON.Scene, { center, tileSize, world, sun }: OsmTileOptions) {
     this.scene = scene;
     this.center = center;
+    this.world = world;
+    this.sun = sun;
     this.tileSize = tileSize;
-    this.shadowGenerator = shadowGenerator;
+    this.sun = sun;
     this.radius = tileSize / Math.sqrt(2);
     this.coord = new Coord(center);
     this.rootNode = new BABYLON.TransformNode('tileRoot', scene);
@@ -44,6 +51,9 @@ export default class OsmTile {
   createBuildings(data: any[]) {
     // 创建建筑
     console.log('building', data);
+    const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
+    this.world.setBoundary(material);
+
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
@@ -55,13 +65,18 @@ export default class OsmTile {
       poly.checkCollisions = true;  // 开启碰撞检测
       poly.position.y = d.level;
       poly.parent = this.rootNode;
-      this.shadowGenerator?.addShadowCaster(poly);
+      poly.material = material;
+      this.sun.shadowGenerator?.addShadowCaster(poly);
     });
   }
 
   createHighways(data: any[]) {
     // 创建道路
-    console.log('highway', data)
+    console.log('highway', data);
+    const material = new BABYLON.StandardMaterial('highwayMaterial', this.scene);
+    material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    this.world.setBoundary(material);
+
     data.forEach(d => {
       if (d.nodes.length > 2) {
         const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
@@ -74,6 +89,7 @@ export default class OsmTile {
         );
         line.position.y = 0.1;
         line.parent = this.rootNode;
+        line.material = material;
       }
     });
   }
@@ -84,6 +100,7 @@ export default class OsmTile {
     groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
     // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
     // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    this.world.setBoundary(groundMaterial);
 
     ground.checkCollisions = true;  // 开启碰撞检测
     ground.material = groundMaterial;
@@ -98,7 +115,8 @@ export default class OsmTile {
     const osmTile = new OsmTile(this.scene, {
       center: point,
       tileSize: this.tileSize,
-      shadowGenerator: this.shadowGenerator,
+      world: this.world,
+      sun: this.sun,
     });
     osmTile.offsetX = offsetX;
     osmTile.offsetY = offsetY;

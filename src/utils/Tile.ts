@@ -1,12 +1,14 @@
 import * as BABYLON from 'babylonjs';
 import OsmTile from '@/utils/OsmTile';
 import Player from '@/components/Player';
+import World from '@/components/World';
+import Sun from '@/components/Sun';
 
 type TileOptions = {
   center: any;
   tileSize: number;
-  player: Player;
-  shadowGenerator?: BABYLON.ShadowGenerator;
+  world: World;
+  sun: Sun;
 }
 
 export default class {
@@ -19,22 +21,15 @@ export default class {
   currentOsmTile: OsmTile;
   osmTiles: OsmTile[] = [];
   
-  constructor(scene: BABYLON.Scene, { center, tileSize, player, shadowGenerator }: TileOptions) {
+  constructor(scene: BABYLON.Scene, { center, tileSize, world, sun }: TileOptions) {
     this.scene = scene;
     this.tileSize = tileSize;
     this.rootNode = new BABYLON.TransformNode('rootNode', scene);
 
-    this.currentOsmTile = new OsmTile(scene, { center, tileSize, shadowGenerator });
+    this.currentOsmTile = new OsmTile(scene, { center, tileSize, world, sun });
     this.currentOsmTile.createTile();
     this.currentOsmTile.rootNode.parent = this.rootNode;
     this.osmTiles.push(this.currentOsmTile);
-
-    player.body.parent = this.rootNode;
-
-    this.update(player.x, player.z);
-    player.addKeyboardEventObserver(() => {
-      this.update(player.x, player.z);
-    });
   }
 
   update(x: number, y: number) {

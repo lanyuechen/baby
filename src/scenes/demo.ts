@@ -17,6 +17,7 @@ export default class DemoScene {
   createScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     // 创建场景
     const scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
   
     // 创建相机
     const camera = this.createCamera(scene, canvas);
@@ -25,26 +26,28 @@ export default class DemoScene {
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.5;  // 灯光强度
   
-    const world = new World(scene, tileSize * 0.6);
-    world.setBoundary();
-    const sun = new Sun(scene, {
-      world,
-      center,
-    });
+    const sun = new Sun(scene, { center });
 
-    light.excludedMeshes.push(sun.lightSphere);
+    light.excludedMeshes.push(sun.body);
 
     const player = new Player(scene);
+
     const tile = new Tile(scene, {
       center,
       tileSize,
-      player,
-      shadowGenerator: sun.shadowGenerator,
+      world: new World(scene, tileSize * 0.6),
+      sun,
+    });
+
+    player.body.parent = tile.rootNode;
+
+    tile.update(player.x, player.z);
+    player.addKeyboardEventObserver(() => {
+      tile.update(player.x, player.z);
     });
 
     // 碰撞检测
     scene.collisionsEnabled = true;
-    player.body.checkCollisions = true;
     
     return scene;
   }
