@@ -99,7 +99,7 @@ export default class OsmTile {
     // 创建水域
     console.log('waterArea', data);
     const material = new BABYLON.StandardMaterial('waterAreaMaterial', this.scene);
-    material.diffuseColor = new BABYLON.Color3(0.69, 0.87, 0.89);
+    material.diffuseColor = new BABYLON.Color3(0, 1, 1);
     this.boundary.setBoundary(material);
 
     data.forEach(d => {

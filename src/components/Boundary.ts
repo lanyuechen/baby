@@ -7,6 +7,30 @@ export default class {
   constructor(scene: BABYLON.Scene, size: number) {
     this.scene = scene;
     this.size = size;
+
+    this.createUnderGround();
+  }
+
+  createUnderGround() {
+    const ground = BABYLON.MeshBuilder.CreateCylinder(
+      'underGround', 
+      {
+        diameter: this.size * Math.sqrt(2),
+        height: this.size / 5,
+        tessellation: 4,
+        cap: BABYLON.Mesh.CAP_START,
+      },
+      this.scene,
+    );
+    const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
+    groundMaterial.diffuseColor = new BABYLON.Color3(0, 1, 1);
+
+    // ground.checkCollisions = true;  // 开启碰撞检测
+    ground.material = groundMaterial;
+    ground.rotation.y = Math.PI / 4;
+    // ground.position.x = this.size / 2;
+    // ground.position.z = this.size / 2;
+    ground.position.y = -this.size / 5 / 2;
   }
 
   getBoundary() {
