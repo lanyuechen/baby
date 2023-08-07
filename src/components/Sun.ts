@@ -13,7 +13,7 @@ export default class Sun {
   scene: BABYLON.Scene;
   center: any;
   trackRadius: number = 400;    // 太阳轨道半径
-  sunRadius: number = 30;       // 太阳半径
+  sunRadius: number = 20;       // 太阳半径
   speed: number = 30;           // 分钟
   light: BABYLON.DirectionalLight;
   body: BABYLON.Mesh;
@@ -267,9 +267,29 @@ export default class Sun {
   }
 
   createShadowGenerator(light: BABYLON.DirectionalLight) {
-    const shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
-    shadowGenerator.useBlurExponentialShadowMap = true;
+    // const shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+    const shadowGenerator = new BABYLON.CascadedShadowGenerator(1024, light);
+    shadowGenerator.forceBackFacesOnly = true;
+    // shadowGenerator.useBlurExponentialShadowMap = true;
     // shadowGenerator.getShadowMap()!.refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+    // 速度优先
+    //   将shadowMaxZ设置得等于camera.maxZ
+    //   设置尽量小的cascadeBlendPercentage
+    //   设置autoCalcDepthBounds = true
+    //   设置freezeShadowCastersBoundingInfo = true
+    //   设置depthClamp = false
+
+    // 质量优先
+    //   将 camera.maxZ - camera.minZ 的范围设置得越紧凑越好
+    //   将 camera.minZ 设置得越大越好
+    //   numCascades = 4
+    //   map的size越大越好
+    //   设置 autoCalcDepthBounds = true  
+    //   设置lambda = 1
+    //   设置 depthClamp = true
+    //   设置 stabilizeCascades = false
+    //   filteringQuality 设置得越大越好
+
     return shadowGenerator;
   }
 

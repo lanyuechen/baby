@@ -18,5 +18,5 @@ export const getPolygonDirection = (points: any[]) => {
   const c = points[(idx + 1) % points.length];
   const ab = [b.x - a.x, b.y - a.y];
   const bc = [c.x - b.x, c.y - b.y];
-  return ab[0] * bc[1] * bc[0] * ab[1] > 0; // 大于0正向，逆时针反向
+  return ab[0] * bc[1] - bc[0] * ab[1] > 0; // 大于0正向，逆时针反向
 }

@@ -52,6 +52,7 @@ export default class WorldScene {
     // 创建场景
     const scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+    scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
     return scene;
   }

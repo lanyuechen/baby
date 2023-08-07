@@ -54,6 +54,7 @@ export default class OsmTile {
     console.log('building', data);
     const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
     material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+    // material.ambientColor = new BABYLON.Color3(1, 1, 1);
     this.boundary.setBoundary(material);
 
     data.forEach(d => {
@@ -64,7 +65,7 @@ export default class OsmTile {
         {
           shape: direction ? vec3 : vec3.reverse(),
           depth: d.level,
-          sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+          // sideOrientation: BABYLON.Mesh.DOUBLESIDE,
         },
         this.scene,
         earcut,
@@ -73,6 +74,7 @@ export default class OsmTile {
       poly.position.y = d.level;
       poly.parent = this.rootNode;
       poly.material = material;
+      poly.receiveShadows = true;
       this.sun?.shadowGenerator.addShadowCaster(poly);
     });
   }
