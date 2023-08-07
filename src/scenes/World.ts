@@ -19,33 +19,38 @@ export default class WorldScene {
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
     this.scene = this.createScene(engine);
-    this.camera = this.createCamera(this.scene, canvas);
+    this.camera = this.createCamera(this.scene);
+
+    this.camera.attachControl(canvas, true);
 
     this.boundary = new Boundary(this.scene, tileSize * 0.6);
-    this.sun = new Sun(this.scene, { center });
+    // this.sun = new Sun(this.scene, { center });
 
     // 创建一个半球光，朝向天空（0, 1, 0）
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
     light.intensity = 0.5;  // 灯光强度
-    if (this.sun) {
-      light.excludedMeshes.push(this.sun.body);
-    }
+    // if (this.sun) {
+    //   light.excludedMeshes.push(this.sun.body);
+    // }
 
     this.tile = new Tile(this.scene, {
       center,
       tileSize,
       boundary: this.boundary,
-      sun: this.sun,
+      // sun: this.sun,
     });
 
-    this.player = new Player(this.scene);
-
-    this.player.body.parent = this.tile.rootNode;
-
-    this.tile.update(this.player.x, this.player.z);
-    this.player.addKeyboardEventObserver(() => {
-      this.tile.update(this.player.x, this.player.z);
+    this.player = new Player(this.scene, {
+      rootNode: this.tile.rootNode,
+      onUpdate: () => {
+        this.tile.update(this.player.position);
+      }
     });
+
+    this.tile.update(this.player.position);
+    
+    this.scene.activeCamera = this.camera;
+    this.player.camera.attachControl(canvas, true);
   }
 
   createScene(engine: BABYLON.Engine) {
@@ -54,10 +59,13 @@ export default class WorldScene {
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
     scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
+
+    scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
     return scene;
   }
 
-  createCamera(scene: BABYLON.Scene, canvas: HTMLCanvasElement) {
+  createCamera(scene: BABYLON.Scene) {
     const camera = new BABYLON.ArcRotateCamera(
       'camera',
       -Math.PI / 2,
@@ -71,7 +79,6 @@ export default class WorldScene {
     camera.setTarget(BABYLON.Vector3.Zero());
   
     // 相机控制
-    camera.attachControl(canvas, true);
     camera.lowerRadiusLimit = tileSize * 0.8;
     camera.upperRadiusLimit = tileSize * 2;
     camera.lowerBetaLimit = 0.001;  // 设置为0会导致α旋转时方向错乱

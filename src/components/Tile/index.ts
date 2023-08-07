@@ -31,12 +31,12 @@ export default class {
     this.osmTiles.push(this.currentOsmTile);
   }
 
-  update(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+  update(position: BABYLON.Vector3) {
+    this.x = position.x;
+    this.y = position.z;
 
-    this.rootNode.position.x = -x;
-    this.rootNode.position.z = -y;
+    this.rootNode.position.x = -position.x;
+    this.rootNode.position.z = -position.z;
 
     this.updatetile();
   }
