@@ -17,13 +17,11 @@ export default class Player extends BABYLON.AbstractMesh {
 
     this.robot = new Robot(this.scene);
     this.robot.parent = this;
-
     this.robot.scaling = new BABYLON.Vector3(20, 20, 20);
-    this.robot.ellipsoid = new BABYLON.Vector3(20, 20, 20);
-    this.robot.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
-    this.robot.checkCollisions = true; // 开启碰撞检测
 
     this.camera.parent = this;
+
+    // new BABYLON.PhysicsAggregate(this, BABYLON.PhysicsShapeType.BOX, { mass: 0 }, this.scene);
 
     this.scene.onKeyboardObservable.add(this.handleKeyEvent);
     this.scene.onBeforeRenderObservable.add(this.handleMove);
@@ -35,9 +33,6 @@ export default class Player extends BABYLON.AbstractMesh {
       BABYLON.Vector3.Zero(),
       this.scene,
     );
-    camera.applyGravity = true;
-    camera.ellipsoid = new BABYLON.Vector3(0.5, 1.7, 0.5);
-    camera.checkCollisions = true;
     return camera;
   }
 

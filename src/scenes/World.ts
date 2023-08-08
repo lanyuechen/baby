@@ -3,6 +3,7 @@ import Player from '@/components/Player';
 import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
+import HavokPhysics from '@babylonjs/havok';
 
 const center = { lon: 116.3160, lat: 40.0468 };  // 清河
 // const center = { lon: 116.3908, lat: 39.9148 }; // 故宫
@@ -13,15 +14,19 @@ const preLoadBoxSize = tileSize * 0.5;
 const cameraDistance = tileSize * 0.8;
 
 export default class WorldScene {
-  scene: BABYLON.Scene;
-  camera: BABYLON.Camera;
-  player: Player;
-  tile: Tile;
+  scene!: BABYLON.Scene;
+  camera!: BABYLON.Camera;
+  player!: Player;
+  tile!: Tile;
   sun?: Sun;
-  boundary: Boundary;
+  boundary!: Boundary;
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
-    this.scene = this.createScene(engine);
+    this.init(engine, canvas);
+  }
+
+  async init(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
+    this.scene = await this.createScene(engine);
     this.camera = this.createCamera(this.scene);
 
     this.camera.attachControl(canvas, true);
@@ -57,14 +62,17 @@ export default class WorldScene {
     this.player.camera.attachControl(canvas, true);
   }
 
-  createScene(engine: BABYLON.Engine) {
+  async createScene(engine: BABYLON.Engine) {
     // 创建场景
     const scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
     scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
 
-    scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    // scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    const havokInstance = await HavokPhysics();
+    const physicsPlugin = new BABYLON.HavokPlugin(true, havokInstance);
+    scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
 
     return scene;
   }

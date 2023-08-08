@@ -99,6 +99,8 @@ export default class {
     // ground.position.x = this.size / 2;
     // ground.position.z = this.size / 2;
     ground.position.y = -this.size / 5 / 2;
+
+    new BABYLON.PhysicsAggregate(ground, BABYLON.PhysicsShapeType.BOX, { mass: 0 }, this.scene);
   }
 
   getBoundary() {

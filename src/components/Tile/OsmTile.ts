@@ -70,7 +70,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         this.scene,
         earcut,
       );
-      poly.checkCollisions = true;  // 开启碰撞检测
       poly.position.y = d.level;
       poly.parent = this;
       poly.material = material;
@@ -132,7 +131,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     this.boundary.setBoundary(groundMaterial);
 
-    ground.checkCollisions = true;  // 开启碰撞检测
     ground.material = groundMaterial;
     ground.position.x = this.tileSize / 2;
     ground.position.z = this.tileSize / 2;

@@ -14,5 +14,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       'babylonjs': process.env.NODE_ENV === 'development' ? 'babylonjs/babylon.max' : 'babylonjs',
     }
+  },
+  optimizeDeps: {
+    exclude: ['@babylonjs/havok'],
   }
 })
