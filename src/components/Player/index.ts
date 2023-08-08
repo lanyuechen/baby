@@ -2,27 +2,22 @@ import * as BABYLON from 'babylonjs';
 
 import Robot from './Robot';
 
-export default class Player {
+export default class Player extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
-  position = new BABYLON.Vector3(500, 100, 500);
   camera: BABYLON.UniversalCamera;
-  onUpdate: (player: Player) => void;
-  rootNode: BABYLON.AbstractMesh;
-  private keyMap = new Map();
   robot: Robot;
+  private keyMap = new Map();
 
-  constructor(scene: BABYLON.Scene, options: any = {}) {
+  constructor(name: string, scene: BABYLON.Scene) {
+    super(name, scene);
+
     this.scene = scene;
     this.camera = this.createCamera();
-    this.onUpdate = options.onUpdate;
-    this.rootNode = new BABYLON.AbstractMesh('playerRootNode', this.scene);
-    this.rootNode.parent = options.rootNode;
-    this.rootNode.position = this.position.clone();
-    this.rootNode.rotationQuaternion = null;
+    this.rotationQuaternion = null;
 
     const robot = new Robot(this.scene);
     robot.load().then(() => {
-      robot.body.parent = this.rootNode;
+      robot.body.parent = this;
   
       robot.body.scaling = new BABYLON.Vector3(20, 20, 20);
       robot.body.ellipsoid = new BABYLON.Vector3(20, 20, 20);
@@ -31,7 +26,7 @@ export default class Player {
     });
     this.robot = robot;
 
-    this.camera.parent = this.rootNode;
+    this.camera.parent = this;
 
     this.scene.onKeyboardObservable.add(this.handleKeyEvent);
     this.scene.onBeforeRenderObservable.add(this.handleMove);
@@ -60,7 +55,7 @@ export default class Player {
     if (this.keyMap.size === 0) {
       return;
     }
-    this.rootNode.rotationQuaternion = this.rootNode.rotationQuaternion || BABYLON.Quaternion.Identity();
+    this.rotationQuaternion = this.rotationQuaternion || BABYLON.Quaternion.Identity();
     const angle = BABYLON.Vector3.GetAngleBetweenVectorsOnPlane(
       this.scene.activeCamera!.getForwardRay().direction,
       BABYLON.Vector3.Forward(),
@@ -91,13 +86,10 @@ export default class Player {
 
   moveFirstPerson(angle: number, [r, u, f]: [number, number, number]) {
     const rotation = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), angle);
-    this.rootNode.rotationQuaternion = rotation;
+    this.rotationQuaternion = rotation;
     this.camera.rotation.y = 0;
 
-    this.rootNode.movePOV(r, u, f);
-
-    this.position = this.rootNode.position.clone();
-    this.onUpdate(this);
+    this.movePOV(r, u, f);
   }
 
   handleMoveThirdPerson(angle: number) {
@@ -119,15 +111,13 @@ export default class Player {
   moveThirdPerson(angle: number) {
     const rotation = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), angle);
 
-    this.rootNode.movePOV(0, 0, 1);
+    this.movePOV(0, 0, 1);
     this.robot.run();
-    this.position = this.rootNode.position.clone();
-    this.onUpdate(this);
     BABYLON.Quaternion.SlerpToRef(
-      this.rootNode.rotationQuaternion!,
+      this.rotationQuaternion!,
       rotation,
       0.1,
-      this.rootNode.rotationQuaternion!,
+      this.rotationQuaternion!,
     );
   }
 
