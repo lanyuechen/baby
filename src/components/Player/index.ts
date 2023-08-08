@@ -31,25 +31,22 @@ export default class Player {
     });
     this.robot = robot;
 
-    // const robot = new Robot(this.scene, this.position.clone(), {
-    //   rootNode: options.rootNode,
-    //   onUpdate: (position: BABYLON.Vector3) => {
-    //     this.position = position;
-    //     options.onUpdate?.(this);
-    //   },
-    // });
-
-    this.camera.parent = options.rootNode;
-    // this.body.parent = options.rootNode;
-
-    // this.observer = this.scene.onBeforeRenderObservable.add(() => {
-    //   const { x, y, z } = this.camera.position;
-    //   this.position = this.camera.position.clone();
-    //   this.onUpdate?.(this);
-    // })
+    this.camera.parent = this.rootNode;
 
     this.scene.onKeyboardObservable.add(this.handleKeyEvent);
     this.scene.onBeforeRenderObservable.add(this.handleMove);
+  }
+
+  createCamera() {
+    const camera = new BABYLON.UniversalCamera(
+      'playerCamera',
+      BABYLON.Vector3.Zero(),
+      this.scene,
+    );
+    camera.applyGravity = true;
+    camera.ellipsoid = new BABYLON.Vector3(0.5, 1.7, 0.5);
+    camera.checkCollisions = true;
+    return camera;
   }
 
   handleKeyEvent = (info: BABYLON.KeyboardInfo) => {
@@ -60,36 +57,68 @@ export default class Player {
   }
 
   handleMove = () => {
-    let rot;
-
+    if (this.keyMap.size === 0) {
+      return;
+    }
     this.rootNode.rotationQuaternion = this.rootNode.rotationQuaternion || BABYLON.Quaternion.Identity();
     const angle = BABYLON.Vector3.GetAngleBetweenVectorsOnPlane(
       this.scene.activeCamera!.getForwardRay().direction,
       BABYLON.Vector3.Forward(),
       BABYLON.Vector3.Up(),
     );
-    // const angle = (this.scene.activeCamera as BABYLON.ArcRotateCamera).alpha;
 
+    if (this.scene.activeCamera instanceof BABYLON.ArcRotateCamera) {
+      this.handleMoveThirdPerson(angle);
+    } else {
+      this.handleMoveFirstPerson(angle);
+    }
+  }
+
+  handleMoveFirstPerson(angle: number) {
     if (this.keyMap.get('w')) { // w
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle + Math.PI);
-      this.moveRotation(rot);
+      this.moveFirstPerson(-angle, [0, 0, -1]);
     }
     if (this.keyMap.get('s')) { // s
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle);
-      this.moveRotation(rot);
+      this.moveFirstPerson(-angle, [0, 0, 1]);
     }
     if (this.keyMap.get('d')) { // d
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle - Math.PI / 2);
-      this.moveRotation(rot);
+      this.moveFirstPerson(-angle, [-1, 0, 0]);
     }
     if (this.keyMap.get('a')) { // a
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle + Math.PI / 2);
-      this.moveRotation(rot);
+      this.moveFirstPerson(-angle, [1, 0, 0]);
+    }
+  }
+
+  moveFirstPerson(angle: number, [r, u, f]: [number, number, number]) {
+    const rotation = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), angle);
+    this.rootNode.rotationQuaternion = rotation;
+    this.camera.rotation.y = 0;
+
+    this.rootNode.movePOV(r, u, f);
+
+    this.position = this.rootNode.position.clone();
+    this.onUpdate(this);
+  }
+
+  handleMoveThirdPerson(angle: number) {
+    if (this.keyMap.get('w')) { // w
+      this.moveThirdPerson(-angle + Math.PI);
+    }
+    if (this.keyMap.get('s')) { // s
+      this.moveThirdPerson(-angle);
+    }
+    if (this.keyMap.get('d')) { // d
+      this.moveThirdPerson(-angle - Math.PI / 2);
+    }
+    if (this.keyMap.get('a')) { // a
+      this.moveThirdPerson(-angle + Math.PI / 2);
     }
   }
 
   // 缓动旋转到指定方向
-  moveRotation(rotation: BABYLON.Quaternion) {
+  moveThirdPerson(angle: number) {
+    const rotation = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), angle);
+
     this.rootNode.movePOV(0, 0, 1);
     this.robot.run();
     this.position = this.rootNode.position.clone();
@@ -100,18 +129,6 @@ export default class Player {
       0.1,
       this.rootNode.rotationQuaternion!,
     );
-  }
-
-  createCamera() {
-    const camera = new BABYLON.UniversalCamera(
-      'playerCamera',
-      this.position,
-      this.scene,
-    );
-    camera.applyGravity = true;
-    camera.ellipsoid = new BABYLON.Vector3(0.5, 1.7, 0.5);
-    camera.checkCollisions = true;
-    return camera;
   }
 
   dispose() {

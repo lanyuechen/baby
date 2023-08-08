@@ -53,7 +53,7 @@ export default class WorldScene {
 
     this.tile.update(this.player.position);
     
-    this.scene.activeCamera = this.player.camera;
+    this.scene.activeCamera = this.camera;
     this.player.camera.attachControl(canvas, true);
   }
 
