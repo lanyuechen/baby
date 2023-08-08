@@ -10,40 +10,33 @@ type SceneLoaderSuccessParams = {
 
 export default class Robot {
   scene: BABYLON.Scene;
-  currentParam?: any;
-  idleParam?: any;
-  runParam?: any;
-  walkParam?: any;
   body!: BABYLON.AbstractMesh;
-  keyMap = new Map();
-  position = new BABYLON.Vector3(0, 0, 0);
-  onUpdate: (position: BABYLON.Vector3) => void;
+  private currentParam?: any;
+  private idleParam?: any;
+  private runParam?: any;
+  private walkParam?: any;
 
-  constructor(scene: BABYLON.Scene, position: BABYLON.Vector3, options: any = {}) {
+  constructor(scene: BABYLON.Scene) {
     this.scene = scene;
-    this.position = position;
-    this.onUpdate = options.onUpdate;
+  }
 
-    this.createRobot(options.rootNode).then(() => {
-      this.scene.onBeforeRenderObservable.add(this.handleMove);
-    });
-
-    this.scene.onKeyboardObservable.add((info) => {
-      this.keyMap.set(info.event.key, info.type === BABYLON.KeyboardEventTypes.KEYDOWN);
-      if (info.type === BABYLON.KeyboardEventTypes.KEYUP) {
-        this.toIdle();
-      }
+  static fetchModel(scene: BABYLON.Scene) {
+    return new Promise<SceneLoaderSuccessParams>((resolve) => {
+      BABYLON.SceneLoader.ImportMesh(
+        '',
+        'models/',
+        'Xbot.glb',
+        scene,
+        (newMeshes, particleSystems, skeletons, animationGroups) => {
+          resolve({ newMeshes, particleSystems, skeletons, animationGroups });
+          // this.engine.hideLoadingUI();
+        },
+      );
     });
   }
 
-  async createRobot(rootNode: BABYLON.TransformNode) {
-    const { newMeshes, animationGroups } = await this.fetchModel();
-
-    newMeshes[0].parent = rootNode;
-    newMeshes[0].rotationQuaternion = null;
-    newMeshes[0].rotation.y = Math.PI;
-    newMeshes[0].position = this.position;
-    newMeshes[0].scaling = new BABYLON.Vector3(50, 50, 50);
+  async load() {
+    const { newMeshes, animationGroups } = await Robot.fetchModel(this.scene);
     this.body = newMeshes[0];
 
     const { idleParam, walkParam, runParam } = this.createAnimationParams(animationGroups);
@@ -52,21 +45,8 @@ export default class Robot {
     this.runParam = runParam;
     this.idleParam = idleParam;
     this.currentParam = idleParam;
-  }
 
-  fetchModel() {
-    return new Promise<SceneLoaderSuccessParams>((resolve) => {
-      BABYLON.SceneLoader.ImportMesh(
-        '',
-        'models/',
-        'Xbot.glb',
-        this.scene,
-        (newMeshes, particleSystems, skeletons, animationGroups) => {
-          resolve({ newMeshes, particleSystems, skeletons, animationGroups });
-          // this.engine.hideLoadingUI();
-        },
-      );
-    });
+    return this;
   }
 
   createAnimationParams(animationGroups: BABYLON.AnimationGroup[]) {
@@ -88,74 +68,24 @@ export default class Robot {
     return { idleParam, walkParam, runParam };
   }
 
-  toIdle() {
-    if (this.currentParam === this.idleParam) {
-      return;
-    }
-    if (this.currentParam) {
-      this.idleParam.anim?.syncAllAnimationsWith(null);
-      this.currentParam.anim?.syncAllAnimationsWith(this.idleParam.anim!.animatables[0]);
-    }
-    this.scene.onBeforeAnimationsObservable.removeCallback(this.handleBeforeAnimation);
-    this.currentParam = this.idleParam;
-    this.scene.onBeforeAnimationsObservable.add(this.handleBeforeAnimation);
-  }
-
-  toRun() {
-    this.body.movePOV(0, 0, -1);
-    this.onUpdate?.(this.body.position);
-    if (this.currentParam === this.runParam) {
-      return;
-    }
-
-    if (this.currentParam) {
-      this.runParam.anim?.syncAllAnimationsWith(null);
-      this.currentParam.anim?.syncAllAnimationsWith(this.runParam.anim!.animatables[0]);
-    }
-    this.scene.onBeforeAnimationsObservable.removeCallback(this.handleBeforeAnimation);
-    this.currentParam = this.runParam;
-    this.scene.onBeforeAnimationsObservable.add(this.handleBeforeAnimation);
-  }
-
-  handleMove = () => {
-    if (!this.body) {
-      return;
-    }
-    let rot;
-
-    this.body.rotationQuaternion = this.body.rotationQuaternion || BABYLON.Quaternion.Identity();
-    const angle = BABYLON.Vector3.GetAngleBetweenVectorsOnPlane(
-      this.scene.activeCamera!.getForwardRay().direction,
-      BABYLON.Vector3.Backward(),
-      BABYLON.Vector3.Up(),
-    );
-
-    if (this.keyMap.get('w')) { // w
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle + Math.PI);
-      this.moveRotation(rot);
-    }
-    if (this.keyMap.get('s')) { // s
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle);
-      this.moveRotation(rot);
-    }
-    if (this.keyMap.get('d')) { // d
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle - Math.PI / 2);
-      this.moveRotation(rot);
-    }
-    if (this.keyMap.get('a')) { // a
-      rot = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), -angle + Math.PI / 2);
-      this.moveRotation(rot);
+  runAnimation(aniParam: any) {
+    if (this.currentParam !== aniParam) {
+      this.scene.onBeforeAnimationsObservable.removeCallback(this.handleBeforeAnimation);
+      this.currentParam = aniParam;
+      this.scene.onBeforeAnimationsObservable.add(this.handleBeforeAnimation);
     }
   }
 
-  moveRotation(rotation: BABYLON.Quaternion) {
-    this.toRun();
-    BABYLON.Quaternion.SlerpToRef(
-      this.body.rotationQuaternion!,
-      rotation,
-      0.1,
-      this.body.rotationQuaternion!,
-    );
+  stand() {
+    this.runAnimation(this.idleParam);
+  }
+
+  run() {
+    this.runAnimation(this.runParam);
+  }
+
+  walk() {
+    this.runAnimation(this.walkParam);
   }
 
   handleBeforeAnimation = () => {

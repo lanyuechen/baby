@@ -8,6 +8,9 @@ const center = { lon: 116.3160, lat: 40.0468 };  // 清河
 // const center = { lon: 116.3908, lat: 39.9148 }; // 故宫
 // const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 const tileSize = 1000;
+const boundarySize = tileSize * 0.4;
+const preLoadBoxSize = tileSize * 0.5;
+const cameraDistance = tileSize * 0.8;
 
 export default class WorldScene {
   scene: BABYLON.Scene;
@@ -23,7 +26,7 @@ export default class WorldScene {
 
     this.camera.attachControl(canvas, true);
 
-    this.boundary = new Boundary(this.scene, tileSize * 0.6);
+    this.boundary = new Boundary(this.scene, boundarySize);
     // this.sun = new Sun(this.scene, { center });
 
     // 创建一个半球光，朝向天空（0, 1, 0）
@@ -36,6 +39,7 @@ export default class WorldScene {
     this.tile = new Tile(this.scene, {
       center,
       tileSize,
+      preLoadBoxSize,
       boundary: this.boundary,
       // sun: this.sun,
     });
@@ -49,7 +53,7 @@ export default class WorldScene {
 
     this.tile.update(this.player.position);
     
-    this.scene.activeCamera = this.camera;
+    this.scene.activeCamera = this.player.camera;
     this.player.camera.attachControl(canvas, true);
   }
 
@@ -70,7 +74,7 @@ export default class WorldScene {
       'camera',
       -Math.PI / 2,
       Math.PI / 4,
-      tileSize,
+      cameraDistance,
       new BABYLON.Vector3(0, 0, 0),
       scene,
     );
@@ -79,9 +83,9 @@ export default class WorldScene {
     camera.setTarget(BABYLON.Vector3.Zero());
   
     // 相机控制
-    camera.lowerRadiusLimit = tileSize * 0.8;
-    camera.upperRadiusLimit = tileSize * 2;
-    camera.lowerBetaLimit = 0.001;  // 设置为0会导致α旋转时方向错乱
+    camera.lowerRadiusLimit = cameraDistance * 0.5;
+    camera.upperRadiusLimit = cameraDistance * 2;
+    camera.lowerBetaLimit = 0.1;  // 由于技术原因，将beta设置为0或者PI(180°)会引起问题，在这种情况下可以将beta在0或PI的基础上偏移0.1弧度（0.6°）
     camera.upperBetaLimit = Math.PI / 2;
     camera.wheelPrecision = 0.3;
 
