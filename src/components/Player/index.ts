@@ -8,23 +8,20 @@ export default class Player extends BABYLON.AbstractMesh {
   robot: Robot;
   private keyMap = new Map();
 
-  constructor(name: string, scene: BABYLON.Scene) {
-    super(name, scene);
+  constructor(scene: BABYLON.Scene) {
+    super('player', scene);
 
     this.scene = scene;
     this.camera = this.createCamera();
     this.rotationQuaternion = null;
 
-    const robot = new Robot(this.scene);
-    robot.load().then(() => {
-      robot.body.parent = this;
-  
-      robot.body.scaling = new BABYLON.Vector3(20, 20, 20);
-      robot.body.ellipsoid = new BABYLON.Vector3(20, 20, 20);
-      robot.body.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
-      robot.body.checkCollisions = true; // 开启碰撞检测
-    });
-    this.robot = robot;
+    this.robot = new Robot(this.scene);
+    this.robot.parent = this;
+
+    this.robot.scaling = new BABYLON.Vector3(20, 20, 20);
+    this.robot.ellipsoid = new BABYLON.Vector3(20, 20, 20);
+    this.robot.ellipsoidOffset = new BABYLON.Vector3(0, 0, 0);
+    this.robot.checkCollisions = true; // 开启碰撞检测
 
     this.camera.parent = this;
 
@@ -94,16 +91,16 @@ export default class Player extends BABYLON.AbstractMesh {
 
   handleMoveThirdPerson(angle: number) {
     if (this.keyMap.get('w')) { // w
-      this.moveThirdPerson(-angle + Math.PI);
-    }
-    if (this.keyMap.get('s')) { // s
       this.moveThirdPerson(-angle);
     }
+    if (this.keyMap.get('s')) { // s
+      this.moveThirdPerson(-angle + Math.PI);
+    }
     if (this.keyMap.get('d')) { // d
-      this.moveThirdPerson(-angle - Math.PI / 2);
+      this.moveThirdPerson(-angle + Math.PI / 2);
     }
     if (this.keyMap.get('a')) { // a
-      this.moveThirdPerson(-angle + Math.PI / 2);
+      this.moveThirdPerson(-angle - Math.PI / 2);
     }
   }
 
@@ -111,7 +108,7 @@ export default class Player extends BABYLON.AbstractMesh {
   moveThirdPerson(angle: number) {
     const rotation = BABYLON.Quaternion.RotationAxis(BABYLON.Vector3.Up(), angle);
 
-    this.movePOV(0, 0, 1);
+    this.movePOV(0, 0, -1);
     this.robot.run();
     BABYLON.Quaternion.SlerpToRef(
       this.rotationQuaternion!,

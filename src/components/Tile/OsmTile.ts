@@ -14,7 +14,7 @@ type OsmTileOptions = {
   shadowGenerator?: BABYLON.ShadowGenerator;
 }
 
-export default class OsmTile {
+export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   center: PointLla;
   radius: number;
@@ -24,9 +24,10 @@ export default class OsmTile {
   coord: Coord;
   offsetX: number = 0;
   offsetY: number = 0;
-  rootNode: BABYLON.TransformNode;
 
   constructor(scene: BABYLON.Scene, { center, tileSize, boundary, sun }: OsmTileOptions) {
+    super('osmTile', scene);
+
     this.scene = scene;
     this.center = center;
     this.boundary = boundary;
@@ -34,7 +35,6 @@ export default class OsmTile {
     this.tileSize = tileSize;
     this.radius = tileSize / Math.sqrt(2);
     this.coord = new Coord(center);
-    this.rootNode = new BABYLON.TransformNode('tileRoot', scene);
   }
 
   async createTile() {
@@ -45,8 +45,8 @@ export default class OsmTile {
     this.createWaterAreas(data.filter(d => d.tags.natural === 'water'));
     this.createGround();
     
-    this.rootNode.position.x = this.offsetX * this.tileSize;
-    this.rootNode.position.z = this.offsetY * this.tileSize;
+    this.position.x = this.offsetX * this.tileSize;
+    this.position.z = this.offsetY * this.tileSize;
   }
 
   createBuildings(data: any[]) {
@@ -72,7 +72,7 @@ export default class OsmTile {
       );
       poly.checkCollisions = true;  // 开启碰撞检测
       poly.position.y = d.level;
-      poly.parent = this.rootNode;
+      poly.parent = this;
       poly.material = material;
       poly.receiveShadows = true;
       this.sun?.shadowGenerator.addShadowCaster(poly);
@@ -97,7 +97,7 @@ export default class OsmTile {
           this.scene,
         );
         line.position.y = 0.1;
-        line.parent = this.rootNode;
+        line.parent = this;
         line.material = material;
       }
     });
@@ -119,7 +119,7 @@ export default class OsmTile {
         earcut,
       );
       poly.position.y = 0.1;
-      poly.parent = this.rootNode;
+      poly.parent = this;
       poly.material = material;
     });
   }
@@ -136,7 +136,7 @@ export default class OsmTile {
     ground.material = groundMaterial;
     ground.position.x = this.tileSize / 2;
     ground.position.z = this.tileSize / 2;
-    ground.parent = this.rootNode;
+    ground.parent = this;
     ground.receiveShadows = true;
   }
 
@@ -151,10 +151,6 @@ export default class OsmTile {
     osmTile.offsetX = offsetX;
     osmTile.offsetY = offsetY;
     return osmTile;
-  }
-
-  dispose() {
-    this.rootNode.dispose(false, true);
   }
 
   private async fetchData() {

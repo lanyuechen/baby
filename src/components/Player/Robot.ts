@@ -8,16 +8,18 @@ type SceneLoaderSuccessParams = {
   animationGroups: BABYLON.AnimationGroup[];
 }
 
-export default class Robot {
+export default class Robot extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
-  body!: BABYLON.AbstractMesh;
   private currentParam?: any;
   private idleParam?: any;
   private runParam?: any;
   private walkParam?: any;
 
   constructor(scene: BABYLON.Scene) {
+    super('robot', scene);
     this.scene = scene;
+
+    this.load();
   }
 
   static fetchModel(scene: BABYLON.Scene) {
@@ -37,7 +39,7 @@ export default class Robot {
 
   async load() {
     const { newMeshes, animationGroups } = await Robot.fetchModel(this.scene);
-    this.body = newMeshes[0];
+    newMeshes[0].parent = this;
 
     const { idleParam, walkParam, runParam } = this.createAnimationParams(animationGroups);
 
@@ -45,8 +47,6 @@ export default class Robot {
     this.runParam = runParam;
     this.idleParam = idleParam;
     this.currentParam = idleParam;
-
-    return this;
   }
 
   createAnimationParams(animationGroups: BABYLON.AnimationGroup[]) {

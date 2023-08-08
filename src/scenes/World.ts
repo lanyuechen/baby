@@ -44,16 +44,14 @@ export default class WorldScene {
       // sun: this.sun,
     });
 
-    this.player = new Player('player', this.scene);
-    this.player.parent = this.tile.rootNode;
+    this.player = new Player(this.scene);
+    this.player.parent = this.tile;
     this.player.position = new BABYLON.Vector3(500, 100, 500);
 
     this.tile.update(this.player.position);
     this.scene.onBeforeRenderObservable.add(() => {
       this.tile.update(this.player.position);
     });
-
-    
     
     this.scene.activeCamera = this.camera;
     this.player.camera.attachControl(canvas, true);
