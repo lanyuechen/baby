@@ -30,6 +30,7 @@ export default class WorldScene {
     this.camera = this.createCamera(this.scene);
 
     this.camera.attachControl(canvas, true);
+    this.scene.activeCamera = this.camera;
 
     this.boundary = new Boundary(this.scene, boundarySize);
     // this.sun = new Sun(this.scene, { center });
@@ -57,9 +58,6 @@ export default class WorldScene {
     this.scene.onBeforeRenderObservable.add(() => {
       this.tile.update(this.player.position);
     });
-    
-    this.scene.activeCamera = this.camera;
-    this.player.camera.attachControl(canvas, true);
   }
 
   async createScene(engine: BABYLON.Engine) {
@@ -69,10 +67,10 @@ export default class WorldScene {
     scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
 
-    // scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
-    const havokInstance = await HavokPhysics();
-    const physicsPlugin = new BABYLON.HavokPlugin(true, havokInstance);
-    scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
+    scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    // const havokInstance = await HavokPhysics();
+    // const physicsPlugin = new BABYLON.HavokPlugin(true, havokInstance);
+    // scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
 
     return scene;
   }

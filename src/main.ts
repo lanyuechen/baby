@@ -1,3 +1,5 @@
+import 'babylonjs-loaders';
+
 import App from './App';
 
 console.log(`main.ts starting ${App.name}`);
