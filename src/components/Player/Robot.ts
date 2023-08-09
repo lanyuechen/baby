@@ -22,24 +22,14 @@ export default class Robot extends BABYLON.AbstractMesh {
     this.load();
   }
 
-  static fetchModel(scene: BABYLON.Scene) {
-    return new Promise<SceneLoaderSuccessParams>((resolve) => {
-      BABYLON.SceneLoader.ImportMesh(
-        '',
-        'models/',
-        'Xbot.glb',
-        scene,
-        (newMeshes, particleSystems, skeletons, animationGroups) => {
-          resolve({ newMeshes, particleSystems, skeletons, animationGroups });
-          // this.engine.hideLoadingUI();
-        },
-      );
-    });
-  }
-
   async load() {
-    const { newMeshes, animationGroups } = await Robot.fetchModel(this.scene);
-    newMeshes[0].parent = this;
+    const { meshes, animationGroups } = await BABYLON.SceneLoader.ImportMeshAsync(
+      '',
+      'models/',
+      'Xbot.glb',
+      this.scene,
+    );
+    meshes[0].parent = this;
 
     const { idleParam, walkParam, runParam } = this.createAnimationParams(animationGroups);
 
