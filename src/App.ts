@@ -1,13 +1,13 @@
-import { Engine } from '@babylonjs/core';
+import * as BABYLON from '@babylonjs/core';
 
 import WorldScene from '@/scenes/World';
 
 export default class {
-  engine: Engine;
+  engine: BABYLON.Engine;
   world: WorldScene;
 
   constructor(readonly canvas: HTMLCanvasElement) {
-    this.engine = new Engine(canvas, true);
+    this.engine = new BABYLON.Engine(canvas, true);
     window.addEventListener('resize', () => {
       this.engine.resize();
     });
