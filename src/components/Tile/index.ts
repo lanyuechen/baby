@@ -1,4 +1,4 @@
-import * as BABYLON from 'babylonjs';
+import * as BABYLON from '@babylonjs/core';
 import Boundary from '@/components/Boundary';
 import Sun from '@/components/Sun';
 import OsmTile from './OsmTile';

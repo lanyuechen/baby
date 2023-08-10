@@ -1,4 +1,4 @@
-import * as BABYLON from 'babylonjs';
+import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import { getPolygonDirection } from '@/utils/utils';
 import Boundary from '@/components/Boundary';

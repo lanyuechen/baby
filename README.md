@@ -6,3 +6,4 @@
 - [角色移动](https://news.16p.com/889805.html)
 - [havok角色控制器](https://zhuanlan.zhihu.com/p/604317257)
 - [游戏学习笔记](https://www.zhihu.com/column/c_1597363783227392000)
+- [babylonjs 角色运动官方](https://doc.babylonjs.com/guidedLearning/createAGame/characterMovePt1)

@@ -12,7 +12,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'babylonjs': process.env.NODE_ENV === 'development' ? 'babylonjs/babylon.max' : 'babylonjs',
     }
   },
   optimizeDeps: {

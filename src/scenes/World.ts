@@ -1,4 +1,4 @@
-import * as BABYLON from 'babylonjs';
+import { Engine, Scene, Camera, HemisphericLight, Vector3, Color4, Color3, ArcRotateCamera } from '@babylonjs/core';
 import Player from '@/components/Player';
 import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
@@ -14,18 +14,18 @@ const preLoadBoxSize = tileSize * 0.5;
 const cameraDistance = tileSize * 0.8;
 
 export default class WorldScene {
-  scene!: BABYLON.Scene;
-  camera!: BABYLON.Camera;
+  scene!: Scene;
+  camera!: Camera;
   player!: Player;
   tile!: Tile;
   sun?: Sun;
   boundary!: Boundary;
 
-  constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
+  constructor(engine: Engine, canvas: HTMLCanvasElement) {
     this.init(engine, canvas);
   }
 
-  async init(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
+  async init(engine: Engine, canvas: HTMLCanvasElement) {
     this.scene = await this.createScene(engine);
     this.camera = this.createCamera(this.scene);
 
@@ -36,7 +36,7 @@ export default class WorldScene {
     // this.sun = new Sun(this.scene, { center });
 
     // 创建一个半球光，朝向天空（0, 1, 0）
-    const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
+    const light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
     light.intensity = 0.5;  // 灯光强度
     // if (this.sun) {
     //   light.excludedMeshes.push(this.sun.body);
@@ -52,7 +52,7 @@ export default class WorldScene {
 
     this.player = new Player(this.scene);
     this.player.parent = this.tile;
-    this.player.position = new BABYLON.Vector3(500, 100, 500);
+    this.player.position = new Vector3(500, 100, 500);
 
     this.tile.update(this.player.position);
     this.scene.onBeforeRenderObservable.add(() => {
@@ -60,14 +60,14 @@ export default class WorldScene {
     });
   }
 
-  async createScene(engine: BABYLON.Engine) {
+  async createScene(engine: Engine) {
     // 创建场景
-    const scene = new BABYLON.Scene(engine);
-    scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
-    scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+    const scene = new Scene(engine);
+    scene.clearColor = new Color4(0, 0, 0, 1);
+    scene.ambientColor = new Color3(1, 1, 1);
     scene.collisionsEnabled = true;
 
-    scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    scene.gravity = new Vector3(0, -9.81, 0);
     // const havokInstance = await HavokPhysics();
     // const physicsPlugin = new BABYLON.HavokPlugin(true, havokInstance);
     // scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
@@ -75,18 +75,18 @@ export default class WorldScene {
     return scene;
   }
 
-  createCamera(scene: BABYLON.Scene) {
-    const camera = new BABYLON.ArcRotateCamera(
+  createCamera(scene: Scene) {
+    const camera = new ArcRotateCamera(
       'camera',
       -Math.PI / 2,
       Math.PI / 4,
       cameraDistance,
-      new BABYLON.Vector3(0, 0, 0),
+      new Vector3(0, 0, 0),
       scene,
     );
 
     // 相机指向原点
-    camera.setTarget(BABYLON.Vector3.Zero());
+    camera.setTarget(Vector3.Zero());
   
     // 相机控制
     camera.lowerRadiusLimit = cameraDistance * 0.5;

@@ -1,4 +1,4 @@
-import 'babylonjs-loaders';
+import '@babylonjs/loaders';
 
 import App from './App';
 
