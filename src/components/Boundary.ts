@@ -9,58 +9,7 @@ export default class {
     this.size = size;
 
     this.createUnderGround();
-    // this.createStars();
     // this.createSkybox();
-  }
-
-  createStars() {
-    // Emitter object
-    const stars = BABYLON.MeshBuilder.CreateBox('emitter', { size : 0.01 }, this.scene);
-    // Create a particle system
-    const starsParticles = new BABYLON.ParticleSystem('starsParticles', 500, this.scene);
-    // Texture of each particle
-    starsParticles.particleTexture = new BABYLON.Texture("textures/sun/T_Star.png", this.scene);
-    // Where the stars particles come from
-    const starsEmitter = new BABYLON.SphereParticleEmitter();
-    starsEmitter.radius = this.size * 2;
-    starsEmitter.radiusRange = 0; // emit only from shape surface
-
-    starsParticles.emitter = stars; // the starting object, the emitter
-    starsParticles.particleEmitterType = starsEmitter;
-
-    // Random starting color
-    starsParticles.color1 = new BABYLON.Color4(0.898, 0.737, 0.718, 1.0);
-    starsParticles.color2 = new BABYLON.Color4(0.584, 0.831, 0.894, 1.0);
-
-    // Size of each particle (random between...
-    starsParticles.minSize = 0.15 * this.size / 10;
-    starsParticles.maxSize = 0.3 * this.size / 10;
-
-    starsParticles.minLifeTime = 999999;
-    starsParticles.maxLifeTime = 999999;
-
-    // Burst rate
-    starsParticles.manualEmitCount = 500;
-    starsParticles.maxEmitPower = 0.0;
-
-    // Blend mode : BLENDMODE_ONEONE, BLENDMODE_STANDARD, or BLENDMODE_ADD
-    starsParticles.blendMode = BABYLON.ParticleSystem.BLENDMODE_STANDARD;
-
-    // Set the gravity of all particles
-    starsParticles.gravity = new BABYLON.Vector3(0, 0, 0);
-
-    // Angular speed, in radians
-    starsParticles.minAngularSpeed = 0.0;
-    starsParticles.maxAngularSpeed = 0.0;
-
-    // Speed
-    starsParticles.minEmitPower = 0.0;
-    starsParticles.maxAngularSpeed = 0.0;
-
-    // No billboard
-    starsParticles.isBillboardBased = true;
-
-    starsParticles.start();
   }
 
   createSkybox() {

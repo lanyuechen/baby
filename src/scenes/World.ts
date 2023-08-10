@@ -5,7 +5,7 @@ import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
 import HavokPhysics from '@babylonjs/havok';
 
-const center = { lon: 116.3160, lat: 40.0468 };  // 清河
+const center = { lon: 116.3150, lat: 40.0478 };  // 清河
 // const center = { lon: 116.3908, lat: 39.9148 }; // 故宫
 // const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 const tileSize = 1000;
@@ -81,18 +81,15 @@ export default class WorldScene {
       -Math.PI / 2,
       Math.PI / 4,
       cameraDistance,
-      new BABYLON.Vector3(0, 0, 0),
+      new BABYLON.Vector3(0, 1.8, 0), // 相机指向头顶位置
       scene,
     );
-
-    // 相机指向原点
-    camera.setTarget(BABYLON.Vector3.Zero());
   
     // 相机控制
-    camera.lowerRadiusLimit = cameraDistance * 0.5;
+    camera.lowerRadiusLimit = 2;
     camera.upperRadiusLimit = cameraDistance * 2;
     camera.lowerBetaLimit = 0.1;  // 由于技术原因，将beta设置为0或者PI(180°)会引起问题，在这种情况下可以将beta在0或PI的基础上偏移0.1弧度（0.6°）
-    camera.upperBetaLimit = Math.PI / 2;
+    camera.upperBetaLimit = Math.PI;  // 远距离观察室会导致相机进入到地面下，需要限制
     camera.wheelPrecision = 0.3;
 
     return camera;
