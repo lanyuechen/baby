@@ -3,9 +3,6 @@ import * as BABYLON from '@babylonjs/core';
 import Action, { AgMap } from './Action';
 import InputController from './InputController';
 
-const PLAYER_SPEED = 5;
-const JUMP_SPEED = 2;
-const DASH_FACTOR = 2;
 const GRAVITY = -9.81;
 
 interface Character extends BABYLON.AbstractMesh {
@@ -23,15 +20,22 @@ export default class CharacterController {
   jumpCount: number = 0;
   velocity: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 0);
 
+  PLAYER_SPEED: number = 1;
+  DASH_FACTOR: number = 2;
+  JUMP_SPEED: number = 2;
+
   constructor(
     scene: BABYLON.Scene,
     character: Character,
     animationGroups: BABYLON.AnimationGroup[],
     agMap: AgMap,
+    options: any = {},
   ) {
     this.scene = scene;
     this.character = character;
     this.character.mesh.rotationQuaternion = this.character.mesh.rotationQuaternion || BABYLON.Quaternion.Identity();
+
+    this.PLAYER_SPEED = options.PLAYER_SPEED
 
     this.action = new Action(scene, animationGroups, agMap);
 
@@ -70,7 +74,7 @@ export default class CharacterController {
     let dashFactor = 1;
     // 加速
     if (this.inputController.isDash()) {
-      dashFactor = DASH_FACTOR;
+      dashFactor = this.DASH_FACTOR;
     }
 
     this.character.rotation.y = -BABYLON.Vector3.GetAngleBetweenVectorsOnPlane(
@@ -97,8 +101,8 @@ export default class CharacterController {
     const inputAmt = BABYLON.Scalar.Clamp(Math.sqrt(h ** 2 + v ** 2), 0, 1);
 
     // 更新速度
-    this.velocity.x = x * dashFactor * inputAmt * PLAYER_SPEED * this.deltaTime;
-    this.velocity.z = z * dashFactor * inputAmt * PLAYER_SPEED * this.deltaTime;
+    this.velocity.x = x * dashFactor * inputAmt * this.PLAYER_SPEED * this.deltaTime;
+    this.velocity.z = z * dashFactor * inputAmt * this.PLAYER_SPEED * this.deltaTime;
 
     // 检查是否需要旋转
     let input = new BABYLON.Vector3(this.inputController.horizontalAxis, 0, this.inputController.verticalAxis);
@@ -138,7 +142,7 @@ export default class CharacterController {
 
     //Jump detection
     if (this.inputController.isJump() && this.jumpCount > 0) {
-      this.velocity.y = JUMP_SPEED;
+      this.velocity.y = this.JUMP_SPEED;
       this.jumpCount--;
 
       //jumping and falling animation flags

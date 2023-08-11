@@ -23,12 +23,14 @@ export default class Player extends BABYLON.AbstractMesh {
   }
 
   async loadCharacter() {
-    const { meshes, animationGroups } = await BABYLON.SceneLoader.ImportMeshAsync(
+    const { meshes, animationGroups, ...others } = await BABYLON.SceneLoader.ImportMeshAsync(
       '',
       'models/cartoon/',
       'Zombie_Male.gltf',
       this.scene,
     );
+
+    console.log('====', others)
 
     // console.log('====', animationGroups.map(d => d.name))
 
@@ -54,10 +56,12 @@ export default class Player extends BABYLON.AbstractMesh {
 
     this.mesh = new BABYLON.AbstractMesh('meshContainer', this.scene);
     this.mesh.parent = this;
-    // this.mesh.scaling = new BABYLON.Vector3(20, 20, 20);
+    this.mesh.scaling = new BABYLON.Vector3(20, 20, 20);
     meshes[0].parent = this.mesh;
     
-    const cc = new CharacterController(this.scene, this, animationGroups, agMap);
+    const cc = new CharacterController(this.scene, this, animationGroups, agMap, {
+      PLAYER_SPEED: 50,
+    });
     cc.start();
     cc.activeCamera();
   }

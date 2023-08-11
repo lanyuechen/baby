@@ -52,9 +52,15 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   createBuildings(data: any[]) {
     // 创建建筑
     console.log('building', data);
-    const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
-    material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-    // material.ambientColor = new BABYLON.Color3(1, 1, 1);
+
+    const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
+
+    material.albedoColor = new BABYLON.Color3(1, 1, 1);
+    material.metallic = 0;
+    material.roughness = 1.0;
+
+    // const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
+    // material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
     this.boundary.setBoundary(material);
 
     data.forEach(d => {
@@ -126,14 +132,21 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
   createGround() {
     const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: this.tileSize, height: this.tileSize }, this.scene);
-    const groundMaterial = new BABYLON.StandardMaterial('groundMaterial', this.scene);
-    groundMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1);
-    // groundMaterial.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
-    // groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    this.boundary.setBoundary(groundMaterial);
+    
+    const material = new BABYLON.PBRMaterial('groundMaterial', this.scene);
+
+    material.albedoColor = new BABYLON.Color3(1, 1, 1);
+    material.metallic = 0;
+    material.roughness = 1.0;
+    
+    // const material = new BABYLON.StandardMaterial('groundMaterial', this.scene);
+    // material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+    // // material.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
+    // // material.specularColor = new BABYLON.Color3(0, 0, 0);
+    this.boundary.setBoundary(material);
 
     ground.checkCollisions = true;
-    ground.material = groundMaterial;
+    ground.material = material;
     ground.position.x = this.tileSize / 2;
     ground.position.z = this.tileSize / 2;
     ground.parent = this;
