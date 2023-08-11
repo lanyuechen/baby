@@ -1,20 +1,25 @@
 import * as BABYLON from '@babylonjs/core';
 
+export type AgMap = {
+  [key: string]: string;
+}
+
 export default class CharacterController {
   scene: BABYLON.Scene;
   animationGroups: BABYLON.AnimationGroup[];
   currentAnimation: string = 'idle';
   keyMap = new Map();
 
-  constructor(scene: BABYLON.Scene, animationGroups: BABYLON.AnimationGroup[]) {
+  constructor(scene: BABYLON.Scene, animationGroups: BABYLON.AnimationGroup[], agMap: AgMap) {
     this.scene = scene;
-    this.animationGroups = this.initAnimationGroups(animationGroups);
+    this.animationGroups = this.initAnimationGroups(animationGroups, agMap);
   }
 
-  initAnimationGroups(animationGroups: BABYLON.AnimationGroup[]) {
+  initAnimationGroups(animationGroups: BABYLON.AnimationGroup[], agMap: AgMap) {
     return animationGroups.map(d => {
       d.play(true);
       d.weight = d.name === 'idle' ? 1 : 0;
+      d.name = agMap[d.name] || d.name;
       return d;
     });
   }

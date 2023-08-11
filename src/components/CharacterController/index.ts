@@ -1,6 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 
-import Action from './Action';
+import Action, { AgMap } from './Action';
 import InputController from './InputController';
 
 const PLAYER_SPEED = 5;
@@ -27,12 +27,13 @@ export default class CharacterController {
     scene: BABYLON.Scene,
     character: Character,
     animationGroups: BABYLON.AnimationGroup[],
+    agMap: AgMap,
   ) {
     this.scene = scene;
     this.character = character;
     this.character.mesh.rotationQuaternion = this.character.mesh.rotationQuaternion || BABYLON.Quaternion.Identity();
 
-    this.action = new Action(scene, animationGroups);
+    this.action = new Action(scene, animationGroups, agMap);
 
     this.cameraBox = new BABYLON.TransformNode('cameraBox', this.scene);
     this.cameraBox.parent = this.character;
@@ -121,8 +122,6 @@ export default class CharacterController {
   updateGroundDetection() {
     this.deltaTime = this.scene.getEngine().getDeltaTime() / 1000.0;
 
-    console.log('====', this.isGrounded(), this.velocity.y)
-
     // 未掉到地上
     if (!this.isGrounded()) {
       this.grounded = false;
@@ -159,7 +158,11 @@ export default class CharacterController {
       this.inputController.isLeft() ||
       this.inputController.isRight()
     ) {
-      this.action.run('run');
+      if (this.inputController.isDash()) {
+        this.action.run('run');
+      } else {
+        this.action.run('walk');
+      }
     } else {
       this.action.run('idle');
     }

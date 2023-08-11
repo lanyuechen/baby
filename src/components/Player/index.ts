@@ -25,17 +25,39 @@ export default class Player extends BABYLON.AbstractMesh {
   async loadCharacter() {
     const { meshes, animationGroups } = await BABYLON.SceneLoader.ImportMeshAsync(
       '',
-      'models/',
-      'Xbot.glb',
+      'models/cartoon/',
+      'Zombie_Male.gltf',
       this.scene,
     );
+
+    // console.log('====', animationGroups.map(d => d.name))
+
+    const agMap = {
+      // 'Death': '',
+      // 'Defeat',
+      'Idle': 'idle',
+      'Jump': 'jump',
+      // 'PickUp',
+      // 'Punch',
+      // 'RecieveHit',
+      // 'Roll',
+      'Run': 'run',
+      // 'Run_Carry',
+      // 'Shoot_OneHanded',
+      // 'SitDown',
+      // 'StandUp',
+      // 'SwordSlash',
+      // 'Victory',
+      'Walk': 'walk',
+      // 'Walk_Carry'
+    };
 
     this.mesh = new BABYLON.AbstractMesh('meshContainer', this.scene);
     this.mesh.parent = this;
     // this.mesh.scaling = new BABYLON.Vector3(20, 20, 20);
     meshes[0].parent = this.mesh;
     
-    const cc = new CharacterController(this.scene, this, animationGroups);
+    const cc = new CharacterController(this.scene, this, animationGroups, agMap);
     cc.start();
     cc.activeCamera();
   }
