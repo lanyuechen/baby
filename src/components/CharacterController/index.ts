@@ -58,7 +58,7 @@ export default class CharacterController {
   beforeRenderUpdate = () => {
     this.updateFromControls();
     this.updateGroundDetection();
-    this._animatePlayer();
+    this.animatePlayer();
   }
 
   updateFromControls() {
@@ -151,7 +151,7 @@ export default class CharacterController {
     this.character.moveWithCollisions(this.velocity);
   }
 
-  private _animatePlayer(): void {
+  private animatePlayer(): void {
     if (
       this.inputController.isForward() ||
       this.inputController.isBackward() ||
