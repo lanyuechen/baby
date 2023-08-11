@@ -33,21 +33,21 @@ export default class WorldScene {
     this.scene.activeCamera = this.camera;
 
     this.boundary = new Boundary(this.scene, boundarySize);
-    // this.sun = new Sun(this.scene, { center });
+    this.sun = new Sun(this.scene, { center });
 
     // 创建一个半球光，朝向天空（0, 1, 0）
     const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
     light.intensity = 0.5;  // 灯光强度
-    // if (this.sun) {
-    //   light.excludedMeshes.push(this.sun.body);
-    // }
+    if (this.sun) {
+      light.excludedMeshes.push(this.sun.body);
+    }
 
     this.tile = new Tile(this.scene, {
       center,
       tileSize,
       preLoadBoxSize,
       boundary: this.boundary,
-      // sun: this.sun,
+      sun: this.sun,
     });
 
     this.player = new Player(this.scene);
