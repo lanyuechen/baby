@@ -3,7 +3,7 @@ import Player from '@/components/Player';
 import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
-import HavokPhysics from '@babylonjs/havok';
+// import HavokPhysics from '@babylonjs/havok';
 
 const center = { lon: 116.3150, lat: 40.0478 };  // 清河
 // const center = { lon: 116.3908, lat: 39.9148 }; // 故宫

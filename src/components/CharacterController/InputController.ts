@@ -31,19 +31,19 @@ export default class CharacterController {
   };
 
   isForward() {
-    return this.inputMap['w'] || this.mobileUp;
+    return this.inputMap['w'] || this.inputMap['W'] || this.mobileUp;
   }
 
   isBackward() {
-    return this.inputMap['s'] || this.mobileDown;
+    return this.inputMap['s'] || this.inputMap['S'] || this.mobileDown;
   }
 
   isLeft() {
-    return this.inputMap['a'] || this.mobileLeft;
+    return this.inputMap['a'] || this.inputMap['A'] || this.mobileLeft;
   }
 
   isRight() {
-    return this.inputMap['d'] || this.mobileLeft;
+    return this.inputMap['d'] || this.inputMap['D'] || this.mobileLeft;
   }
 
   isDash() {
