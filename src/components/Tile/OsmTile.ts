@@ -9,9 +9,8 @@ import Coord, { PointLla } from './Coord';
 type OsmTileOptions = {
   center: any;
   tileSize: number;
-  boundary: Boundary;
+  boundary?: Boundary;
   sun?: Sun;
-  shadowGenerator?: BABYLON.ShadowGenerator;
 }
 
 export default class OsmTile extends BABYLON.AbstractMesh {
@@ -19,7 +18,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   center: PointLla;
   radius: number;
   tileSize: number;
-  boundary: Boundary;
+  boundary?: Boundary;
   sun?: Sun;
   coord: Coord;
   offsetX: number = 0;
@@ -37,7 +36,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     this.coord = new Coord(center);
   }
 
-  async createTile() {
+  async init() {
     const data = await this.fetchData();
 
     this.createHighways(data.filter(d => d.tags.highway));
@@ -61,7 +60,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     // const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
     // material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-    this.boundary.setBoundary(material);
+    this.boundary?.setBoundary(material);
 
     data.forEach(d => {
       const direction = getPolygonDirection(d.nodes);
@@ -90,7 +89,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     console.log('highway', data);
     const material = new BABYLON.StandardMaterial('highwayMaterial', this.scene);
     material.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    this.boundary.setBoundary(material);
+    this.boundary?.setBoundary(material);
 
     data.forEach(d => {
       if (d.nodes.length > 2) {
@@ -114,7 +113,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     console.log('waterArea', data);
     const material = new BABYLON.StandardMaterial('waterAreaMaterial', this.scene);
     material.diffuseColor = new BABYLON.Color3(0, 1, 1);
-    this.boundary.setBoundary(material);
+    this.boundary?.setBoundary(material);
 
     data.forEach(d => {
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
@@ -143,7 +142,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // material.diffuseColor = new BABYLON.Color3(1, 1, 1);
     // // material.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
     // // material.specularColor = new BABYLON.Color3(0, 0, 0);
-    this.boundary.setBoundary(material);
+    this.boundary?.setBoundary(material);
 
     ground.checkCollisions = true;
     ground.material = material;

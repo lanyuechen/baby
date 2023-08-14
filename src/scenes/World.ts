@@ -10,53 +10,51 @@ const center = { lon: 116.3150, lat: 40.0478 };  // 清河
 // const center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 const tileSize = 1000;
 const boundarySize = tileSize * 0.4;
-const preLoadBoxSize = tileSize * 0.5;
 const cameraDistance = tileSize * 0.8;
 
 export default class WorldScene {
+  engine: BABYLON.Engine;
+  canvas: HTMLCanvasElement;
   scene!: BABYLON.Scene;
-  camera!: BABYLON.Camera;
-  player!: Player;
-  tile!: Tile;
-  sun?: Sun;
-  boundary!: Boundary;
 
   constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
-    this.init(engine, canvas);
+    this.engine = engine;
+    this.canvas = canvas;
+    // this.init();
   }
 
-  async init(engine: BABYLON.Engine, canvas: HTMLCanvasElement) {
-    this.scene = await this.createScene(engine);
-    this.camera = this.createCamera(this.scene);
+  async init() {
+    // 创建场景
+    this.scene = await this.createScene(this.engine);
 
-    this.camera.attachControl(canvas, true);
-    this.scene.activeCamera = this.camera;
+    // 创建相机
+    const camera = this.createCamera(this.scene);
+    camera.attachControl(this.canvas, true);
+    this.scene.activeCamera = camera;
 
-    this.boundary = new Boundary(this.scene, boundarySize);
-    this.sun = new Sun(this.scene, { center });
+    // 创建世界边界（clipPanel、世界盒子等）
+    const boundary = new Boundary(this.scene, boundarySize);
 
-    // 创建一个半球光，朝向天空（0, 1, 0）
-    const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
-    light.intensity = 0.5;  // 灯光强度
-    if (this.sun) {
-      light.excludedMeshes.push(this.sun.body);
-    }
+    // 创建太阳（太阳模型、提供光照、阴影）
+    const sun = undefined; // new Sun(this.scene, { center });
 
-    this.tile = new Tile(this.scene, {
-      center,
-      tileSize,
-      preLoadBoxSize,
-      boundary: this.boundary,
-      sun: this.sun,
-    });
+    // 创建基础灯光，照亮世界
+    const light = this.createBaseLight(this.scene);
 
-    this.player = new Player(this.scene);
-    this.player.parent = this.tile;
-    this.player.position = new BABYLON.Vector3(500, 100, 500);
+    // 创建地图瓦片
+    const tile = new Tile(this.scene, tileSize, { center, boundary, sun });
+    await tile.init();  // 初始化tile
 
-    this.tile.update(this.player.position);
+    // 创建玩家
+    const player = new Player(this.scene);
+    await player.init();
+    player.parent = tile;                             // 玩家作为地图瓦片的子元素
+    player.position = new BABYLON.Vector3(500, 100, 500);  // 初始位置
+
+    // 根据玩家位置更新瓦片图位置，实现将用户置于地图中心的效果
+    tile.update(player.position);
     this.scene.onBeforeRenderObservable.add(() => {
-      this.tile.update(this.player.position);
+      tile.update(player.position);
     });
   }
 
@@ -93,5 +91,11 @@ export default class WorldScene {
     camera.wheelPrecision = 0.3;
 
     return camera;
+  }
+
+  createBaseLight(scene: BABYLON.Scene) {
+    const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.5;  // 灯光强度
+    return light;
   }
 }

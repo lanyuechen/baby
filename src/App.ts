@@ -22,10 +22,13 @@ export default class {
     }
   }
 
-  run() {
+  async run() {
     // this.debug(true);
+    this.engine.displayLoadingUI();
+    await this.world.init();
+    this.engine.hideLoadingUI();
     this.engine.runRenderLoop(() => {
-      this.world?.scene?.render();
+      this.world.scene.render();
     });
   }
 }

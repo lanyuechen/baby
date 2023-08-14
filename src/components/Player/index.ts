@@ -19,10 +19,10 @@ export default class Player extends BABYLON.AbstractMesh {
     this.ellipsoidOffset.y = PLAYER_HEIGHT;
     // this.scaling = new BABYLON.Vector3(20, 20, 20);
 
-    this.loadCharacter();
+    // this.init();
   }
 
-  async loadCharacter() {
+  async init() {
     const { meshes, animationGroups, ...others } = await BABYLON.SceneLoader.ImportMeshAsync(
       '',
       'models/cartoon/',

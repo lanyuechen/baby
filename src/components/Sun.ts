@@ -30,7 +30,6 @@ export default class Sun {
     
     this.light = this.createLight();
     this.body = this.createSun();
-    this.light.excludedMeshes.push(this.body);
     this.shadowGenerator = this.createShadowGenerator(this.light);
     this.updateLight();
     this.addKeyboardEventObserver();
@@ -129,7 +128,8 @@ export default class Sun {
   
     // Create core material
     const coreMaterial = new BABYLON.StandardMaterial('coreMaterial', this.scene)
-    coreMaterial.emissiveColor = new BABYLON.Color3(0.3773, 0.0930, 0.0266); 
+    coreMaterial.emissiveColor = new BABYLON.Color3(0.3773, 0.0930, 0.0266);
+    coreMaterial.disableLighting = true;
   
     // Assign core material to sphere
     coreSphere.material = coreMaterial;

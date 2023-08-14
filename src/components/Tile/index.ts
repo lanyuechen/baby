@@ -5,9 +5,7 @@ import OsmTile from './OsmTile';
 
 type TileOptions = {
   center: any;
-  tileSize: number;
-  preLoadBoxSize: number;
-  boundary: Boundary;
+  boundary?: Boundary;
   sun?: Sun;
 }
 
@@ -15,18 +13,31 @@ export default class extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   tileSize: number;
   preLoadBoxSize: number = 0;
-  currentOsmTile: OsmTile;
+  currentOsmTile!: OsmTile;
   osmTiles: OsmTile[] = [];
+  center: any;
+  boundary?: Boundary;
+  sun?: Sun;
   
-  constructor(scene: BABYLON.Scene, { center, tileSize, preLoadBoxSize, boundary, sun }: TileOptions) {
+  constructor(scene: BABYLON.Scene, tileSize: number, options: TileOptions) {
     super('tile', scene);
 
     this.scene = scene;
     this.tileSize = tileSize;
-    this.preLoadBoxSize = preLoadBoxSize || tileSize;
+    this.center = options.center;
+    this.boundary = options.boundary;
+    this.sun = options.sun;
+    this.preLoadBoxSize = tileSize * 0.5;
+  }
 
-    this.currentOsmTile = new OsmTile(scene, { center, tileSize, boundary, sun });
-    this.currentOsmTile.createTile();
+  async init() {
+    this.currentOsmTile = new OsmTile(this.scene, {
+      center: this.center,
+      tileSize: this.tileSize,
+      boundary: this.boundary,
+      sun: this.sun,
+    });
+    await this.currentOsmTile.init();
     this.currentOsmTile.parent = this;
     this.osmTiles.push(this.currentOsmTile);
   }
@@ -54,7 +65,7 @@ export default class extends BABYLON.AbstractMesh {
 
       if (!tile) {
         const newTile = this.currentOsmTile.next(offsetX, offsetY);
-        newTile.createTile();
+        newTile.init();
         newTile.parent = this;
         this.osmTiles.push(newTile);
       }

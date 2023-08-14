@@ -20,15 +20,8 @@ export default class CharacterController {
     this.scene = scene;
 
     this.scene.onKeyboardObservable.add(this.handleKeyEvent);
-
-    this.scene.onBeforeRenderObservable.add(() => {
-      this.updateFromKeyboard();
-    });
+    this.scene.onBeforeRenderObservable.add(this.updateFromKeyboard);
   }
-
-  handleKeyEvent = (info: BABYLON.KeyboardInfo) => {
-    this.inputMap[info.event.key] = info.type === BABYLON.KeyboardEventTypes.KEYDOWN;
-  };
 
   isForward() {
     return this.inputMap['w'] || this.inputMap['W'] || this.mobileUp;
@@ -54,7 +47,11 @@ export default class CharacterController {
     return this.inputMap[' '] || this.mobileJump;
   }
 
-  updateFromKeyboard() {
+  handleKeyEvent = (info: BABYLON.KeyboardInfo) => {
+    this.inputMap[info.event.key] = info.type === BABYLON.KeyboardEventTypes.KEYDOWN;
+  };
+
+  updateFromKeyboard = () => {
     // 前-后
     if (this.isForward()) {
       this.verticalAxis = 1;
@@ -82,5 +79,6 @@ export default class CharacterController {
 
   dispose() {
     this.scene.onKeyboardObservable.removeCallback(this.handleKeyEvent);
+    this.scene.onBeforeRenderObservable.removeCallback(this.updateFromKeyboard);
   }
 }
