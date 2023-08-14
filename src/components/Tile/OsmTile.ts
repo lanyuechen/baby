@@ -40,7 +40,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     const data = await this.fetchData();
 
     this.createHighways(data.filter(d => d.tags.highway));
-    this.createBuildings(data.filter(d => d.tags.building));
+    this.createBuildings(data.filter(d => d.tags.building && d.tags['building']));
     this.createWaterAreas(data.filter(d => d.tags.natural === 'water'));
     this.createGround();
     
@@ -52,31 +52,29 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // 创建建筑
     console.log('building', data);
 
-    const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
-
-    material.albedoColor = new BABYLON.Color3(1, 1, 1);
-    material.metallic = 0;
-    material.roughness = 1.0;
-
-    // const material = new BABYLON.StandardMaterial('buildingMaterial', this.scene);
-    // material.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
-    this.boundary?.setBoundary(material);
-
     data.forEach(d => {
+      const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
+
+      material.albedoColor = new BABYLON.Color3(1, 1, 1);
+      material.metallic = 0;
+      material.roughness = 1.0;
+      material.albedoColor = Osm.getBuildingColor(d);   // 设置建筑颜色
+      this.boundary?.setBoundary(material);
+
       const direction = getPolygonDirection(d.nodes);
       const vec3 = d.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
       const poly = BABYLON.MeshBuilder.ExtrudePolygon(
         `building-${d.id}`,
         {
           shape: direction ? vec3 : vec3.reverse(),
-          depth: d.level,
+          depth: d.height,
           // sideOrientation: BABYLON.Mesh.DOUBLESIDE,
         },
         this.scene,
         earcut,
       );
       poly.checkCollisions = true;
-      poly.position.y = d.level;
+      poly.position.y = d.height;
       poly.parent = this;
       poly.material = material;
       poly.receiveShadows = true;
@@ -190,7 +188,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         buildings.push({
           ...d,
           nodes: d.nodes.map((id: number) => nodeMap[id]),
-          level: parseInt(d.tags['building:levels'] || '1') * 3,
+          height: Osm.getBuildingHeight(d),
         });
       }
     });
