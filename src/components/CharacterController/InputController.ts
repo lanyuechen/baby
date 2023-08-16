@@ -24,23 +24,23 @@ export default class CharacterController {
   }
 
   isForward() {
-    return this.inputMap['w'] || this.inputMap['W'] || this.mobileUp;
+    return this.inputMap['w'] || this.mobileUp;
   }
 
   isBackward() {
-    return this.inputMap['s'] || this.inputMap['S'] || this.mobileDown;
+    return this.inputMap['s'] || this.mobileDown;
   }
 
   isLeft() {
-    return this.inputMap['a'] || this.inputMap['A'] || this.mobileLeft;
+    return this.inputMap['a'] || this.mobileLeft;
   }
 
   isRight() {
-    return this.inputMap['d'] || this.inputMap['D'] || this.mobileLeft;
+    return this.inputMap['d'] || this.mobileLeft;
   }
 
   isDash() {
-    return this.inputMap['Shift'] || this.mobileDash;
+    return this.inputMap['shift'] || this.mobileDash;
   }
 
   isJump() {
@@ -48,7 +48,7 @@ export default class CharacterController {
   }
 
   handleKeyEvent = (info: BABYLON.KeyboardInfo) => {
-    this.inputMap[info.event.key] = info.type === BABYLON.KeyboardEventTypes.KEYDOWN;
+    this.inputMap[info.event.key.toLowerCase()] = info.type === BABYLON.KeyboardEventTypes.KEYDOWN;
   };
 
   updateFromKeyboard = () => {

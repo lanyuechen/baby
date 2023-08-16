@@ -8,9 +8,11 @@ import Tile from '@/components/Tile';
 let center = { lon: 116.3150, lat: 40.0478 };  // 清河
 
 // center = { lon: 116.3908, lat: 39.9148 }; // 故宫
-// center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
+center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 // center = { lon: 116.4609, lat: 39.9129 }; // CBD
 // center = { lon: -73.9762, lat: 40.7656 }; // 纽约
+// center = { lon: 121.49610, lat: 31.24012 }; //上海
+
 const tileSize = 1000;
 const boundarySize = tileSize * 0.4;
 const cameraDistance = tileSize * 0.8;
