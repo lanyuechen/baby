@@ -31,10 +31,13 @@ export type NodeData = OsmNodeElement & {
 export type BuildingData = {
   id: number;
   type: 'building';
+  nodes: NodeData[];
   height: number;
   minHeight: number;
   color: string;
-  nodes: NodeData[];
+  roofColor: string;
+  material?: string;
+  roofMaterial?: string;
   origin: OsmWayElement;  // 存储原始数据，测试用
 }
 

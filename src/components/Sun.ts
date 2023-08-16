@@ -26,8 +26,8 @@ export default class Sun {
 
     this.light = this.createLight();
 
-    this.body = this.createSun();
-    // this.body = new BABYLON.Mesh('test', this.scene);
+    // this.body = this.createSun();
+    this.body = new BABYLON.Mesh('test', this.scene);
 
     this.shadowGenerator = this.createShadowGenerator(this.light);
     this.updateLight();
