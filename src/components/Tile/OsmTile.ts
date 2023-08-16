@@ -4,7 +4,7 @@ import Sun from '@/components/Sun';
 import OsmBuilding from '@/components/OsmMesh/OsmBuilding';
 import OsmHighway from '@/components/OsmMesh/OsmHighway';
 import OsmWater from '@/components/OsmMesh/OsmWater';
-import OsmService, { GeoData, BuildingData, HighwayData, WaterData } from '@/components/OsmService';
+import OsmService, { BuildingData, HighwayData, WaterData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 
 type OsmTileOptions = {
@@ -43,12 +43,12 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     console.log('geodata', data);
 
     data.forEach((d) => {
-      if (d.type === 'highway') {
-        this.createHighway(d);
-      } else if (d.type === 'building') {
+      if (d.type === 'building') {
         this.createBuilding(d);
+      } else if (d.type === 'highway') {
+        // this.createHighway(d);
       } else if (d.type === 'water') {
-        this.createWaterArea(d);
+        // this.createWaterArea(d);
       }
     });
 
@@ -62,7 +62,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // 创建建筑
     const building = new OsmBuilding(this.scene, this.boundary, data);
     building.parent = this;
-    building.receiveShadows = true;
     this.sun?.shadowGenerator.addShadowCaster(building, true);
   }
 

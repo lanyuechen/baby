@@ -8,14 +8,14 @@ import Tile from '@/components/Tile';
 let center = { lon: 116.3150, lat: 40.0478 };  // 清河
 
 // center = { lon: 116.3908, lat: 39.9148 }; // 故宫
-center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
+// center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 // center = { lon: 116.4609, lat: 39.9129 }; // CBD
-// center = { lon: -73.9762, lat: 40.7656 }; // 纽约
 // center = { lon: 121.49610, lat: 31.24012 }; //上海
+// center = { lon: -74.0112, lat: 40.7063 }; // 曼哈顿
 
-const tileSize = 1000;
+const tileSize = 200;
 const boundarySize = tileSize * 0.4;
-const cameraDistance = tileSize * 0.8;
+const cameraDistance = 1000;
 
 export default class WorldScene {
   engine: BABYLON.Engine;
@@ -41,7 +41,7 @@ export default class WorldScene {
     const boundary = new Boundary(this.scene, boundarySize);
 
     // 创建太阳（太阳模型、提供光照、阴影）
-    const sun = undefined; // new Sun(this.scene, { center });
+    const sun = new Sun(this.scene, { center });
 
     // 创建基础灯光，照亮世界
     const light = this.createBaseLight(this.scene);
@@ -54,7 +54,7 @@ export default class WorldScene {
     const player = new Player(this.scene);
     await player.init();
     player.parent = tile;                             // 玩家作为地图瓦片的子元素
-    player.position = new BABYLON.Vector3(500, 100, 500);  // 初始位置
+    player.position = new BABYLON.Vector3(500, 0, 500);  // 初始位置
 
     // 根据玩家位置更新瓦片图位置，实现将用户置于地图中心的效果
     tile.update(player.position);
@@ -90,7 +90,7 @@ export default class WorldScene {
   
     // 相机控制
     camera.lowerRadiusLimit = 2;
-    camera.upperRadiusLimit = cameraDistance * 2;
+    // camera.upperRadiusLimit = cameraDistance * 2;
     camera.lowerBetaLimit = 0.1;  // 由于技术原因，将beta设置为0或者PI(180°)会引起问题，在这种情况下可以将beta在0或PI的基础上偏移0.1弧度（0.6°）
     camera.upperBetaLimit = Math.PI;  // 远距离观察室会导致相机进入到地面下，需要限制
     camera.wheelPrecision = 0.3;

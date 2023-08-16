@@ -37,7 +37,8 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     );
     poly.parent = this;
     poly.material = material;
-    poly.checkCollisions = true;
+    poly.receiveShadows = true;
+    // poly.checkCollisions = true;
     poly.position.y = data.height;
   }
 
@@ -49,7 +50,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     material.roughness = 1.0;
     material.albedoColor = BABYLON.Color3.FromHexString(data.color);   // 设置建筑颜色
 
-    this.boundary?.setBoundary(material);
+    // this.boundary?.setBoundary(material);
 
     return material;
   }
