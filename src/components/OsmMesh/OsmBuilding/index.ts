@@ -3,6 +3,14 @@ import earcut from 'earcut';
 import Boundary from '@/components/Boundary';
 import type { BuildingData } from '@/components/OsmService/typing';
 
+const getPerimeter = (nodes: any[]) => {
+  let res = 0;
+  for (let i = 1; i < nodes.length; i++) {
+    res += Math.sqrt((nodes[i].x - nodes[i - 1].x) ** 2 + (nodes[i].y - nodes[i - 1].y) ** 2);
+  }
+  return res;
+}
+
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   boundary?: Boundary;
@@ -19,11 +27,20 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   create(data: BuildingData) {
     const material = this.createMaterial(data);
 
+    const faceUV = new Array(data.nodes.length + 2);
+    faceUV[0] = new BABYLON.Vector4(0, 0, 0, 0);
+    faceUV[faceUV.length - 1] = new BABYLON.Vector4(0, 0, 0, 0);
+    for (let i = 1; i < faceUV.length - 1; i++) {
+      faceUV[i] = new BABYLON.Vector4(0, 0, 1, 1);
+    }
+
     const poly = BABYLON.MeshBuilder.ExtrudePolygon(
       `building-${data.id}`,
       {
         shape: data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
         depth: data.height - data.minHeight,
+        wrap: true,
+        faceUV,
         // sideOrientation: BABYLON.Mesh.DOUBLESIDE,
       },
       this.scene,
@@ -39,20 +56,41 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   createMaterial(data: BuildingData) {
     const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
 
-    material.metallic = 0;
-    material.roughness = 1.0;
     material.albedoColor = BABYLON.Color3.FromHexString(data.color);   // 设置建筑颜色
-    material.albedoTexture = new BABYLON.Texture('textures/buildings/facades/block_wall_diffuse.png', this.scene);
-    // material.metallicTexture
-    material.bumpTexture = new BABYLON.Texture('textures/buildings/facades/block_wall_normal.png', this.scene);
-    material.forceIrradianceInFragment = true;
+
+    const perimeter = getPerimeter(data.nodes);
+
+    const vScale = (data.height - data.minHeight) / 3;
+    const uScale = perimeter / 3;
+    
+    const albedoTexture = new BABYLON.Texture('textures/buildings/facades/block_window_diffuse.png', this.scene);
+    albedoTexture.vScale = vScale;
+    albedoTexture.uScale = uScale;
+    material.albedoTexture = albedoTexture
+    
+    const bumpTexture = new BABYLON.Texture('textures/buildings/facades/block_window_normal.png', this.scene);
+    bumpTexture.vScale = vScale;
+    bumpTexture.uScale = uScale;
+    material.bumpTexture = bumpTexture;
+
+    material.useParallax = true;
+    material.useParallaxOcclusion = true;
+
+    const metallicTexture = new BABYLON.Texture('textures/buildings/facades/block_window_mask.png', this.scene);
+    metallicTexture.vScale = vScale;
+    metallicTexture.uScale = uScale;
+    material.metallicTexture = metallicTexture;
+    material.roughness = 1;
+    material.metallic = 0;
+
+    // https://learn.foundry.com/zh-hans/modo/content/help/pages/shading_lighting/shader_items/gltf.html
+    material.useRoughnessFromMetallicTextureAlpha = false;
+    material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
+    material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
+    material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
 
     // this.boundary?.setBoundary(material);
 
     return material;
   }
 }
-
-// "facadeBlockWallDiffuse": {"url": "/textures/buildings/facades/block_wall_diffuse.png", "type": "image"},
-// "facadeBlockWallNormal": {"url": "/textures/buildings/facades/block_wall_normal.png", "type": "image"},
-// "facadeBlockWallMask": {"url": "/textures/buildings/facades/block_wall_mask.png", "type": "image"},

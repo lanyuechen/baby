@@ -69,6 +69,8 @@ export default class WorldScene {
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
     scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
+    scene.createDefaultEnvironment();
+    // scene.environmentTexture = new BABYLON.CubeTexture('public/environment.env', this.scene);
 
     scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
     // const havokInstance = await HavokPhysics();
