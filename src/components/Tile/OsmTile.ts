@@ -44,9 +44,9 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     data.forEach((d) => {
       if (d.type === 'building') {
-        this.createBuilding(d);
+        // this.createBuilding(d);
       } else if (d.type === 'highway') {
-        // this.createHighway(d);
+        this.createHighway(d);
       } else if (d.type === 'water') {
         // this.createWaterArea(d);
       }

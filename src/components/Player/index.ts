@@ -30,8 +30,6 @@ export default class Player extends BABYLON.AbstractMesh {
       this.scene,
     );
 
-    console.log('====', others)
-
     // console.log('====', animationGroups.map(d => d.name))
 
     const agMap = {
@@ -56,7 +54,7 @@ export default class Player extends BABYLON.AbstractMesh {
 
     this.mesh = new BABYLON.AbstractMesh('meshContainer', this.scene);
     this.mesh.parent = this;
-    this.mesh.scaling = new BABYLON.Vector3(20, 20, 20);
+    // this.mesh.scaling = new BABYLON.Vector3(20, 20, 20);
     meshes[0].parent = this.mesh;
     
     const cc = new CharacterController(this.scene, this, animationGroups, agMap, {

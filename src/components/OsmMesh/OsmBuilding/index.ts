@@ -89,7 +89,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
     material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
 
-    // this.boundary?.setBoundary(material);
+    this.boundary?.setBoundary(material);
 
     return material;
   }

@@ -11,9 +11,9 @@ let center = { lon: 116.3150, lat: 40.0478 };  // 清河
 // center = { lon: 116.4734, lat: 39.9414 }; // 朝阳公园
 // center = { lon: 116.4609, lat: 39.9129 }; // CBD
 // center = { lon: 121.49610, lat: 31.24012 }; //上海
-center = { lon: -74.0112, lat: 40.7063 }; // 曼哈顿
+// center = { lon: -74.0112, lat: 40.7063 }; // 曼哈顿
 
-const tileSize = 200;
+const tileSize = 1000;
 const boundarySize = tileSize * 0.4;
 const cameraDistance = 1000;
 
@@ -69,7 +69,7 @@ export default class WorldScene {
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
     scene.ambientColor = new BABYLON.Color3(1, 1, 1);
     scene.collisionsEnabled = true;
-    scene.createDefaultEnvironment();
+    // scene.createDefaultEnvironment();
     // scene.environmentTexture = new BABYLON.CubeTexture('public/environment.env', this.scene);
 
     scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
