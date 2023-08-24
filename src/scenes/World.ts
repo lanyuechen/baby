@@ -58,7 +58,7 @@ export default class WorldScene {
     const player = new Player(this.scene);
     await player.init();
     player.parent = tile;                             // 玩家作为地图瓦片的子元素
-    player.position = new BABYLON.Vector3(500, 0, 500);  // 初始位置
+    player.position = new BABYLON.Vector3(500, 100, 500);  // 初始位置
 
     // 根据玩家位置更新瓦片图位置，实现将用户置于地图中心的效果
     tile.update(player.position);

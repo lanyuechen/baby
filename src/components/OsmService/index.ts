@@ -75,7 +75,7 @@ export default class OsmService {
       id: data.id,
       type: 'building',
       nodes,
-      height: parseInt(data.tags['height']) || (parseInt(data.tags?.['building:levels']??0) * LEVEL_HEIGHT) || 1,
+      height: parseInt(data.tags['height']) || (parseInt(data.tags?.['building:levels']??1) * LEVEL_HEIGHT),
       minHeight: parseInt(data.tags['min_height']) || (parseInt(data.tags?.['building:min_level']??0) * LEVEL_HEIGHT),
       color: data.tags['building:colour'] || '#ffffff',
       roofColor: data.tags['roof:colour'] || '#ffffff',

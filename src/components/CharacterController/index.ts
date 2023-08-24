@@ -3,7 +3,7 @@ import * as BABYLON from '@babylonjs/core';
 import Action, { AgMap } from './Action';
 import InputController from './InputController';
 
-const GRAVITY = 0; // -9.81;
+const GRAVITY = -9.81;
 
 interface Character extends BABYLON.AbstractMesh {
   mesh: BABYLON.AbstractMesh;

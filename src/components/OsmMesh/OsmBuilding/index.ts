@@ -49,7 +49,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     poly.parent = this;
     poly.material = material;
     poly.receiveShadows = true;
-    // poly.checkCollisions = true;
+    poly.checkCollisions = true;
     poly.position.y = data.height;
   }
 

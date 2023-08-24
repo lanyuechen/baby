@@ -33,7 +33,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     );
     highway.parent = this;
     highway.material = material;
-    highway.position.y = 0.1;
   }
 
   createMaterial(data: HighwayData) {

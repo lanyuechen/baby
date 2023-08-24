@@ -68,6 +68,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // 创建道路
     const highway = new OsmHighway(this.scene, this.tile.boundary, data);
     highway.parent = this;
+    highway.position.y = 1;
     return highway;
   }
 

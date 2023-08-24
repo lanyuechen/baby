@@ -30,6 +30,7 @@ export default class extends BABYLON.AbstractMesh {
     );
     poly.parent = this;
     poly.material = this.waterMaterial;
+    poly.checkCollisions = true;
   }
 
   createMaterial(data: WaterData) {
