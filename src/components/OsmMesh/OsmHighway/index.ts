@@ -38,6 +38,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   createMaterial(data: HighwayData) {
     const material = new BABYLON.StandardMaterial('highwayMaterial', this.scene);
     material.diffuseColor = BABYLON.Color3.Gray();
+    // material.diffuseTexture = new BABYLON.Texture('textures/surfaces/sand_road_diffuse.png', this.scene);
     this.boundary?.setBoundary(material);
 
     return material;

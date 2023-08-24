@@ -55,4 +55,18 @@ export type WaterData = {
   origin: OsmWayElement;  // 存储原始数据，测试用
 }
 
-export type GeoData = BuildingData | HighwayData | WaterData;
+export type GrassData = {
+  id: number;
+  type: 'grass';
+  nodes: NodeData[];
+  origin: OsmWayElement;  // 存储原始数据，测试用
+}
+
+export type WayData = {
+  id: number;
+  type: 'way';
+  nodes: NodeData[];
+  origin: OsmWayElement;  // 存储原始数据，测试用
+}
+
+export type GeoData = BuildingData | HighwayData | WaterData | GrassData | WayData;

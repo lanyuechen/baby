@@ -23,9 +23,7 @@ export default class Osm {
     return this.fetchApi(`
       [out:json];
       (
-        way(around:${radius},${center.lat},${center.lon})["building"];>;
-        way(around:${radius},${center.lat},${center.lon})["highway"];>;
-        way(around:${radius},${center.lat},${center.lon})["natural"];>;
+        way(around:${radius},${center.lat},${center.lon});>;
       );
       out body;
     `);
@@ -35,8 +33,7 @@ export default class Osm {
     return this.fetchApi(`
       [out:json];
       (
-        way(around:${radius},${center.lat},${center.lon})["natural"="water"];
-        >;
+        way(around:${radius},${center.lat},${center.lon})["natural"="water"];>;
       );
       out body;
     `);
@@ -46,8 +43,7 @@ export default class Osm {
     return this.fetchApi(`
       [out:json];
       (
-        way(around:${radius},${center.lat},${center.lon})["highway"];
-        >;
+        way(around:${radius},${center.lat},${center.lon})["highway"];>;
       );
       out body;
     `);
@@ -57,27 +53,9 @@ export default class Osm {
     return this.fetchApi(`
       [out:json];
       (
-        way(around:${radius},${center.lat},${center.lon})["building"];
-        >;
+        way(around:${radius},${center.lat},${center.lon})["building"];>;
       );
       out body;
     `);
-  }
-
-  static getBuildingColor(data: any) {
-    if (data.tags['building:colour']) {
-      return BABYLON.Color3.FromHexString(data.tags['building:colour']);
-    }
-    return BABYLON.Color3.White();
-  }
-
-  static getBuildingHeight(data: any) {
-    if (data.tags['height']) {
-      return parseInt(data.tags['height']) || 3;
-    }
-    if (data.tags['building:levels']) {
-      return parseInt(data.tags['building:levels'] || '1') * 3;
-    }
-    return 3;
   }
 }
