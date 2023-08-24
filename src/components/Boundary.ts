@@ -8,7 +8,7 @@ export default class {
     this.scene = scene;
     this.size = size;
 
-    this.createUnderGround();
+    // this.createUnderGround();
     // this.createSkybox();
   }
 
@@ -62,10 +62,10 @@ export default class {
   }
 
   setBoundary(material: BABYLON.Material) {
-    const [clipPlane, clipPlane2, clipPlane3, clipPlane4] = this.getBoundary();
-    material.clipPlane = clipPlane;
-    material.clipPlane2 = clipPlane2;
-    material.clipPlane3 = clipPlane3;
-    material.clipPlane4 = clipPlane4;
+    // const [clipPlane, clipPlane2, clipPlane3, clipPlane4] = this.getBoundary();
+    // material.clipPlane = clipPlane;
+    // material.clipPlane2 = clipPlane2;
+    // material.clipPlane3 = clipPlane3;
+    // material.clipPlane4 = clipPlane4;
   }
 }

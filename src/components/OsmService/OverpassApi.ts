@@ -25,7 +25,7 @@ export default class Osm {
       (
         way(around:${radius},${center.lat},${center.lon})["building"];>;
         way(around:${radius},${center.lat},${center.lon})["highway"];>;
-        way(around:${radius},${center.lat},${center.lon})["natural"="water"];>;
+        way(around:${radius},${center.lat},${center.lon})["natural"];>;
       );
       out body;
     `);

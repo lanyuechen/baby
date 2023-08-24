@@ -8,3 +8,6 @@
 - [游戏学习笔记](https://www.zhihu.com/column/c_1597363783227392000)
 - [babylonjs 角色运动官方](https://doc.babylonjs.com/guidedLearning/createAGame/characterMovePt1)
 - [由浅入深学习PBR的原理和实现](https://www.cnblogs.com/timlly/p/10631718.html)
+- [如何选择 WebGL 框架和引擎](https://toutiao.io/posts/y5psg7p/preview)
+- [Filament PBR材质](https://google.github.io/filament/Filament.html#overview)
+- [Filament PBR材质 中文](https://jerkwin.github.io/filamentcn/Filament.md.html)
