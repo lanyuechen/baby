@@ -1,4 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
+import earcut from 'earcut';
 import OsmBuilding from '@/components/OsmMesh/OsmBuilding';
 import OsmHighway from '@/components/OsmMesh/OsmHighway';
 import OsmWaterArea from '@/components/OsmMesh/OsmWaterArea';
@@ -41,7 +42,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
       }
     });
 
-    const ground = this.createGround();
+    const ground = this.createGround(data.filter(d => d.type === 'water') as WaterData[]);
 
     waterAreas.forEach((waterArea) => {
       waterArea.addToRenderList(
@@ -74,22 +75,51 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // 创建水域
     const waterArea = new OsmWaterArea(this.scene, this.tile.boundary, data);
     waterArea.parent = this;
+    waterArea.position.y = -5;
     return waterArea;
   }
 
-  createGround() {
-    const ground = BABYLON.MeshBuilder.CreateGround('ground', { width: this.tile.tileSize, height: this.tile.tileSize }, this.scene);
+  createGround(warterDatas: WaterData[]) {
+    const box = BABYLON.MeshBuilder.CreateBox(
+      'box',
+      {
+        width: this.tile.tileSize,
+        height: 100,
+        depth: this.tile.tileSize,
+      },
+      this.scene,
+    );
+    box.position.y = -50;
+    const groundCSG = BABYLON.CSG.FromMesh(box);
+
+    warterDatas.forEach((waterData) => {
+      const mesh = BABYLON.MeshBuilder.ExtrudePolygon(
+        'water',
+        {
+          shape: waterData.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
+          depth: 100,
+        },
+        this.scene,
+        earcut,
+      );
+      mesh.position.x = -this.tile.tileSize / 2;
+      mesh.position.z = -this.tile.tileSize / 2;
+
+      const csg = BABYLON.CSG.FromMesh(mesh);
+      groundCSG.subtractInPlace(csg);
+      mesh.dispose();
+    });
+    box.dispose();
+
+    const ground = groundCSG.toMesh('ground');
     
     const material = new BABYLON.PBRMaterial('groundMaterial', this.scene);
 
-    material.albedoColor = new BABYLON.Color3(1, 1, 1);
     material.metallic = 0;
     material.roughness = 1.0;
-    
-    // const material = new BABYLON.StandardMaterial('groundMaterial', this.scene);
-    // material.diffuseColor = new BABYLON.Color3(1, 1, 1);
-    // // material.diffuseTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
-    // // material.specularColor = new BABYLON.Color3(0, 0, 0);
+    material.albedoColor = new BABYLON.Color3(1, 1, 1);
+    // material.albedoTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
+
     this.tile.boundary?.setBoundary(material);
 
     ground.checkCollisions = true;

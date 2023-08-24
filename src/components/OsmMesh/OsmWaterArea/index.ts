@@ -30,14 +30,13 @@ export default class extends BABYLON.AbstractMesh {
     );
     poly.parent = this;
     poly.material = this.waterMaterial;
-    poly.position.y = 0.1;
   }
 
   createMaterial(data: WaterData) {
     const material = new WaterMaterial('waterAreaMaterial', this.scene, new BABYLON.Vector2(256, 256));
     material.bumpTexture = new BABYLON.Texture('textures/surfaces/water_normal.png', this.scene); // Set the bump texture
-    material.windForce = -15;
-    material.waveHeight = 1.3;
+    material.windForce = -10;
+    material.waveHeight = 0.2;
     material.windDirection = new BABYLON.Vector2(1, 1);
     material.waterColor = new BABYLON.Color3(0.3, 0.5, 0.8);
     material.colorBlendFactor = 0.3;

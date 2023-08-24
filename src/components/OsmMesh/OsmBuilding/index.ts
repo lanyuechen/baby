@@ -23,7 +23,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     this.create(data);
   }
 
-    // 创建建筑
+  // 创建建筑
   create(data: BuildingData) {
     const material = this.createMaterial(data);
 
