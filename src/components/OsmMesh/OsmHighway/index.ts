@@ -1,13 +1,13 @@
 import * as BABYLON from '@babylonjs/core';
 import Boundary from '@/components/Boundary';
-import type { HighwayData } from '@/components/OsmService/typing';
+import type { WayData } from '@/components/OsmService/typing';
 import line2D from './line2D';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   boundary?: Boundary;
 
-  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: HighwayData) {
+  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: WayData) {
     super('osmBuilding', scene);
     this.scene = scene;
     this.boundary = boundary;
@@ -16,7 +16,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   // 创建道路
-  create(data: HighwayData) {
+  create(data: WayData) {
     if (data.nodes.length < 2) {
       return;
     }
@@ -35,7 +35,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     highway.material = material;
   }
 
-  createMaterial(data: HighwayData) {
+  createMaterial(data: WayData) {
     const material = new BABYLON.StandardMaterial('highwayMaterial', this.scene);
     material.diffuseColor = BABYLON.Color3.Gray();
     // material.diffuseTexture = new BABYLON.Texture('textures/surfaces/sand_road_diffuse.png', this.scene);

@@ -4,9 +4,10 @@ import OsmBuilding from '@/components/OsmMesh/OsmBuilding';
 import OsmHighway from '@/components/OsmMesh/OsmHighway';
 import OsmWaterArea from '@/components/OsmMesh/OsmWaterArea';
 import OsmGrass from '@/components/OsmMesh/OsmGrass';
+import OsmFence from '@/components/OsmMesh/OsmFence';
 import OsmGround from '@/components/OsmMesh/OsmGround';
 import OsmWay from '@/components/OsmMesh/OsmWay';
-import OsmService, { BuildingData, HighwayData, WaterData, GrassData, WayData } from '@/components/OsmService';
+import OsmService, { BuildingData, WayData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
 
@@ -44,6 +45,8 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         waterAreas.push(this.createWaterArea(d));
       } else if (d.type === 'grass') {
         this.createGrass(d);
+      } else if (d.type === 'fence') {
+        this.createFence(d);
       } else if (d.type === 'way') {
         // this.createWay(d);
       }
@@ -52,7 +55,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     console.log('=====', data.filter(d => d.type === 'way'));
     // window.data = data.filter(d => d.type === 'way');
 
-    const ground = this.createGround(data.filter(d => d.type === 'water') as WaterData[]);
+    const ground = this.createGround(data.filter(d => d.type === 'water') as WayData[]);
 
     waterAreas.forEach((waterArea) => {
       waterArea.addToRenderList(
@@ -74,14 +77,21 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     return building;
   }
 
-  createHighway(data: HighwayData) {
+  createHighway(data: WayData) {
     // 创建道路
     const highway = new OsmHighway(this.scene, this.tile.boundary, data);
     highway.parent = this;
     return highway;
   }
 
-  createWaterArea(data: WaterData) {
+  createFence(data: WayData) {
+    // 创建篱笆
+    const fence = new OsmFence(this.scene, this.tile.boundary, data);
+    fence.parent = this;
+    return fence;
+  }
+
+  createWaterArea(data: WayData) {
     // 创建水域
     const waterArea = new OsmWaterArea(this.scene, this.tile.boundary, data);
     waterArea.parent = this;
@@ -89,7 +99,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     return waterArea;
   }
 
-  createGrass(data: GrassData) {
+  createGrass(data: WayData) {
     // 创建草地
     const grass = new OsmGrass(this.scene, this.tile.boundary, data);
     grass.parent = this;
@@ -103,7 +113,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     return waterArea;
   }
 
-  createGround(warterDatas: WaterData[]) {
+  createGround(warterDatas: WayData[]) {
     const ground = new OsmGround(this.scene, this.tile.boundary, {
       width: this.tile.tileSize,
       height: 100,

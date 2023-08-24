@@ -1,13 +1,13 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
-import { WaterData } from '@/components/OsmService';
+import { WayData } from '@/components/OsmService';
 import Boundary from '@/components/Boundary';
 
 export type OsmGroundOptions = {
   width: number;
   height: number;
   depth: number;
-  data: WaterData[];
+  data: WayData[];
 }
 
 export default class OsmTile extends BABYLON.AbstractMesh {
@@ -38,11 +38,11 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     box.position.y = -50;
     const groundCSG = BABYLON.CSG.FromMesh(box);
 
-    data.forEach((waterData) => {
+    data.forEach((WayData) => {
       const mesh = BABYLON.MeshBuilder.ExtrudePolygon(
         'water',
         {
-          shape: waterData.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
+          shape: WayData.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
           depth: 100,
         },
         this.scene,
@@ -64,7 +64,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     material.metallic = 0;
     material.roughness = 1.0;
     material.albedoColor = new BABYLON.Color3(1, 1, 1);
-    // material.albedoTexture = new BABYLON.Texture('textures/ground.jpg', this.scene);
+    // material.albedoTexture = new BABYLON.Texture('textures/surfaces/soil_diffuse.png', this.scene);
 
     this.boundary?.setBoundary(material);
 

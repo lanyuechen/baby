@@ -1,7 +1,7 @@
 import Coord, { PointLla } from '@/components/Coord';
 import { getPolygonDirection } from '@/utils/utils';
 import OverpassApi from './OverpassApi';
-import type { OsmData, OsmWayElement, GeoData, BuildingData, NodeData, HighwayData, WaterData, GrassData, WayData } from './typing';
+import type { OsmData, OsmWayElement, GeoData, BuildingData, NodeData, WayData, WayType } from './typing';
 
 const LEVEL_HEIGHT = 3;
 
@@ -44,11 +44,13 @@ export default class OsmService {
         if (OsmService.isBuilding(d)) {
           features.push(OsmService.parseBuildingData(d, nodes));
         } else if (OsmService.isHighway(d)) {
-          features.push(OsmService.parseHightwayData(d, nodes));
+          features.push(OsmService.parseWayData(d, nodes, 'highway'));
         } else if (OsmService.isWater(d)) {
-          features.push(OsmService.parseWaterData(d, nodes));
+          features.push(OsmService.parseWayData(d, nodes, 'water'));
         } else if (OsmService.isGrass(d)) {
-          features.push(OsmService.parseGrassData(d, nodes));
+          features.push(OsmService.parseWayData(d, nodes, 'grass'));
+        } else if (OsmService.isFence(d)) {
+          features.push(OsmService.parseWayData(d, nodes, 'fence'));
         } else if (OsmService.isWay(d)) {
           features.push(OsmService.parseWayData(d, nodes));
         }
@@ -71,7 +73,15 @@ export default class OsmService {
   }
 
   static isGrass(data: OsmWayElement) {
-    return data.type === 'way' && data.tags?.['landuse'] === 'meadow';
+    return data.type === 'way' && (
+      ['meadow', 'farmland', 'grass'].includes(data.tags?.['landuse']) ||
+      ['fell', 'gress' /* deprecated */, 'grassland'].includes(data.tags?.['natural']) ||
+      ['grass'].includes(data.tags?.['landcover'])
+    );
+  }
+
+  static isFence(data: OsmWayElement) {
+    return data.type === 'way' && data.tags?.['barrier'] === 'fence';
   }
 
   static isWay(data: OsmWayElement) {
@@ -94,42 +104,12 @@ export default class OsmService {
     }
   }
 
-  static parseHightwayData(data: OsmWayElement, nodes: NodeData[]): HighwayData {
+  static parseWayData(data: OsmWayElement, nodes: NodeData[], type: WayType = 'way'): WayData {
     return {
       origin: data,
   
       id: data.id,
-      type: 'highway',
-      nodes,
-    }
-  }
-
-  static parseWaterData(data: OsmWayElement, nodes: NodeData[]): WaterData {
-    return {
-      origin: data,
-  
-      id: data.id,
-      type: 'water',
-      nodes,
-    }
-  }
-
-  static parseGrassData(data: OsmWayElement, nodes: NodeData[]): GrassData {
-    return {
-      origin: data,
-  
-      id: data.id,
-      type: 'grass',
-      nodes,
-    }
-  }
-
-  static parseWayData(data: OsmWayElement, nodes: NodeData[]): WayData {
-    return {
-      origin: data,
-  
-      id: data.id,
-      type: 'way',
+      type,
       nodes,
     }
   }

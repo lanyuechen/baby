@@ -1,15 +1,8 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import Boundary from '@/components/Boundary';
+import { getPerimeter } from '@/utils/utils';
 import type { BuildingData } from '@/components/OsmService/typing';
-
-const getPerimeter = (nodes: any[]) => {
-  let res = 0;
-  for (let i = 1; i < nodes.length; i++) {
-    res += Math.sqrt((nodes[i].x - nodes[i - 1].x) ** 2 + (nodes[i].y - nodes[i - 1].y) ** 2);
-  }
-  return res;
-}
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
