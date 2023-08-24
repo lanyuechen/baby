@@ -1,7 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import OsmBuilding from '@/components/OsmMesh/OsmBuilding';
 import OsmHighway from '@/components/OsmMesh/OsmHighway';
-import OsmWater from '@/components/OsmMesh/OsmWater';
+import OsmWaterArea from '@/components/OsmMesh/OsmWaterArea';
 import OsmService, { BuildingData, HighwayData, WaterData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
@@ -28,18 +28,29 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     console.log('geodata', data);
 
+    const waterAreas: OsmWaterArea[] = [];
+    const buildings: OsmBuilding[] = [];
+
     data.forEach((d) => {
       if (d.type === 'building') {
-        // this.createBuilding(d);
+        buildings.push(this.createBuilding(d));
       } else if (d.type === 'highway') {
         // this.createHighway(d);
       } else if (d.type === 'water') {
-        this.createWaterArea(d);
+        waterAreas.push(this.createWaterArea(d));
       }
     });
 
-    this.createGround();
-    
+    const ground = this.createGround();
+
+    waterAreas.forEach((waterArea) => {
+      waterArea.addToRenderList(
+        ...buildings,
+        ground,
+        this.tile.skybox,
+      );
+    });
+
     this.position.x = this.offsetX * this.tile.tileSize;
     this.position.z = this.offsetY * this.tile.tileSize;
   }
@@ -49,19 +60,21 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     const building = new OsmBuilding(this.scene, this.tile.boundary, data);
     building.parent = this;
     this.tile.sun?.shadowGenerator.addShadowCaster(building, true);
+    return building;
   }
 
   createHighway(data: HighwayData) {
     // 创建道路
     const highway = new OsmHighway(this.scene, this.tile.boundary, data);
     highway.parent = this;
+    return highway;
   }
 
   createWaterArea(data: WaterData) {
     // 创建水域
-    const waterArea = new OsmWater(this.scene, this.tile.boundary, data);
+    const waterArea = new OsmWaterArea(this.scene, this.tile.boundary, data);
     waterArea.parent = this;
-    waterArea.addToRenderList(this.tile.skybox)
+    return waterArea;
   }
 
   createGround() {
@@ -85,6 +98,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     ground.position.z = this.tile.tileSize / 2;
     ground.parent = this;
     ground.receiveShadows = true;
+    return ground;
   }
 
   next(offsetX: number, offsetY: number) {

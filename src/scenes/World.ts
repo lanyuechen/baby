@@ -9,7 +9,7 @@ import Skybox from '@/components/Skybox';
 let center = { lon: 116.3150, lat: 40.0478 };  // 清河
 
 // center = { lon: 116.3908, lat: 39.9148 }; // 故宫
-center = { lon: 116.4734, lat: 39.9410 }; // 朝阳公园
+center = { lon: 116.4734, lat: 39.9350 }; // 朝阳公园
 // center = { lon: 116.4609, lat: 39.9129 }; // CBD
 // center = { lon: 121.49610, lat: 31.24012 }; //上海
 // center = { lon: -74.0112, lat: 40.7063 }; // 曼哈顿

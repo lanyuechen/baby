@@ -39,7 +39,7 @@ export default class extends BABYLON.AbstractMesh {
     material.windForce = -15;
     material.waveHeight = 1.3;
     material.windDirection = new BABYLON.Vector2(1, 1);
-    material.waterColor = new BABYLON.Color3(0.1, 0.1, 0.6);
+    material.waterColor = new BABYLON.Color3(0.3, 0.5, 0.8);
     material.colorBlendFactor = 0.3;
     material.bumpHeight = 0.1;
     material.waveLength = 0.1;
@@ -49,7 +49,9 @@ export default class extends BABYLON.AbstractMesh {
     return material;
   }
 
-  addToRenderList(node: any) {
-    this.waterMaterial?.addToRenderList(node);
+  addToRenderList(...nodes: any[]) {
+    nodes.forEach(node => {
+      this.waterMaterial?.addToRenderList(node);
+    });
   }
 }
