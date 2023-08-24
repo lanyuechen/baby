@@ -6,6 +6,7 @@ import OsmTile from './OsmTile';
 type TileOptions = {
   center: any;
   boundary?: Boundary;
+  skybox: BABYLON.Mesh;
   sun?: Sun;
 }
 
@@ -18,6 +19,7 @@ export default class extends BABYLON.AbstractMesh {
   center: any;
   boundary?: Boundary;
   sun?: Sun;
+  skybox?: BABYLON.Mesh;
   
   constructor(scene: BABYLON.Scene, tileSize: number, options: TileOptions) {
     super('tile', scene);
@@ -27,16 +29,12 @@ export default class extends BABYLON.AbstractMesh {
     this.center = options.center;
     this.boundary = options.boundary;
     this.sun = options.sun;
+    this.skybox = options.skybox;
     this.preLoadBoxSize = tileSize * 0.5;
   }
 
   async init() {
-    this.currentOsmTile = new OsmTile(this.scene, {
-      center: this.center,
-      tileSize: this.tileSize,
-      boundary: this.boundary,
-      sun: this.sun,
-    });
+    this.currentOsmTile = new OsmTile(this.scene, this.center, this);
     await this.currentOsmTile.init();
     this.currentOsmTile.parent = this;
     this.osmTiles.push(this.currentOsmTile);

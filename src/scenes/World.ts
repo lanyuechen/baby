@@ -3,6 +3,7 @@ import Player from '@/components/Player';
 import Sun from '@/components/Sun';
 import Boundary from '@/components/Boundary';
 import Tile from '@/components/Tile';
+import Skybox from '@/components/Skybox';
 // import HavokPhysics from '@babylonjs/havok';
 
 let center = { lon: 116.3150, lat: 40.0478 };  // 清河
@@ -37,7 +38,10 @@ export default class WorldScene {
     camera.attachControl(this.canvas, true);
     this.scene.activeCamera = camera;
 
-    // 创建世界边界（clipPanel、世界盒子等）
+    // 创建天空盒子
+    const skybox = Skybox.create(this.scene);
+
+    // 创建世界边界（clipPanel）
     const boundary = new Boundary(this.scene, boundarySize);
 
     // 创建太阳（太阳模型、提供光照、阴影）
@@ -47,7 +51,7 @@ export default class WorldScene {
     const light = this.createBaseLight(this.scene);
 
     // 创建地图瓦片
-    const tile = new Tile(this.scene, tileSize, { center, boundary, sun });
+    const tile = new Tile(this.scene, tileSize, { center, boundary, skybox, sun });
     await tile.init();  // 初始化tile
 
     // 创建玩家

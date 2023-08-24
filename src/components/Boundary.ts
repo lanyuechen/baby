@@ -9,23 +9,6 @@ export default class {
     this.size = size;
 
     // this.createUnderGround();
-    // this.createSkybox();
-  }
-
-  createSkybox() {
-    const skybox = BABYLON.MeshBuilder.CreateBox(
-      'skybox',
-      {
-        size: 5000,
-        sideOrientation: BABYLON.Mesh.BACKSIDE,
-      },
-      this.scene,
-    );
-    
-    const material = new BABYLON.BackgroundMaterial('backgroundMaterial', this.scene);
-    material.reflectionTexture = new BABYLON.CubeTexture('textures/skybox/TropicalSunnyDay/TropicalSunnyDay', this.scene);
-    material.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skybox.material = material;
   }
 
   createUnderGround() {
