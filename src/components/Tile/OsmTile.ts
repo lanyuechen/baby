@@ -1,13 +1,10 @@
 import * as BABYLON from '@babylonjs/core';
 import OsmBuilding from '@/components/OsmMesh/Building';
-import OsmHighway from '@/components/OsmMesh/Highway';
-import OsmRailway from '@/components/OsmMesh/Railway';
 import OsmWaterArea from '@/components/OsmMesh/WaterArea';
-import OsmGrass from '@/components/OsmMesh/Grass';
-import OsmFence from '@/components/OsmMesh/Fence';
 import OsmGround from '@/components/OsmMesh/Ground';
-import OsmArea from '@/components/OsmMesh/Area';
-import OsmService, { BuildingData, WayData } from '@/components/OsmService';
+import WaterArea from '@/components/OsmMesh/WaterArea';
+import * as OsmMeshes from '@/components/OsmMesh';
+import OsmService, { GeoData, BuildingData, WayData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
 
@@ -38,19 +35,19 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     data.forEach((d) => {
       if (d.type === 'building') {
-        buildings.push(this.createBuilding(d as BuildingData));
-      } else if (d.type === 'highway') {
-        // this.createHighway(d);
-      } else if (d.type === 'railway') {
-        this.createRailway(d);
+        const building =  this.createBuilding(d as BuildingData);
+        this.tile.sun?.shadowGenerator.addShadowCaster(building, true);
+        buildings.push(building as OsmBuilding);
       } else if (d.type === 'water') {
-        waterAreas.push(this.createWaterArea(d));
-      } else if (d.type === 'grass') {
-        this.createGrass(d);
-      } else if (d.type === 'fence') {
-        this.createFence(d);
-      } else if (d.type === 'area') {
-        this.createArea(d, BABYLON.Color3.Black());
+        const waterArea = this.createMesh(d, 'water');
+        waterArea.position.y = -5;
+        waterAreas.push(waterArea as WaterArea);
+      } else if (d.type === 'way') {
+        
+      } else if (d.type === 'highway') {
+        
+      } else {
+        this.createMesh(d, d.type as OsmMeshes.OsmType);
       }
     });
 
@@ -71,55 +68,18 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     this.position.z = this.offsetY * this.tile.tileSize;
   }
 
+  createMesh(data: GeoData, type: OsmMeshes.OsmType) {
+    const OsmMesh = OsmMeshes[type] || OsmMeshes['area'];
+    const mesh = new OsmMesh(this.scene, this.tile.boundary, data);
+    mesh.parent = this;
+    return mesh;
+  }
+
   createBuilding(data: BuildingData) {
     // 创建建筑
     const building = new OsmBuilding(this.scene, this.tile.boundary, data);
     building.parent = this;
-    this.tile.sun?.shadowGenerator.addShadowCaster(building, true);
     return building;
-  }
-
-  createHighway(data: WayData) {
-    // 创建道路
-    const highway = new OsmHighway(this.scene, this.tile.boundary, data);
-    highway.parent = this;
-    return highway;
-  }
-
-  createRailway(data: WayData) {
-    // 创建铁路
-    const railway = new OsmRailway(this.scene, this.tile.boundary, data);
-    railway.parent = this;
-    return railway;
-  }
-
-  createFence(data: WayData) {
-    // 创建篱笆
-    const fence = new OsmFence(this.scene, this.tile.boundary, data);
-    fence.parent = this;
-    return fence;
-  }
-
-  createWaterArea(data: WayData) {
-    // 创建水域
-    const waterArea = new OsmWaterArea(this.scene, this.tile.boundary, data);
-    waterArea.parent = this;
-    waterArea.position.y = -5;
-    return waterArea;
-  }
-
-  createGrass(data: WayData) {
-    // 创建草地
-    const grass = new OsmGrass(this.scene, this.tile.boundary, data);
-    grass.parent = this;
-    return grass;
-  }
-
-  createArea(data: WayData, color: BABYLON.Color3) {
-    // 创建其他区域
-    const area = new OsmArea(this.scene, this.tile.boundary, data, color);
-    area.parent = this;
-    return area;
   }
 
   createGround(warterDatas: WayData[]) {
