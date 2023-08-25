@@ -8,9 +8,6 @@ const TAG_MAP: {[key:string]: MMap} = {
   building: {
     building: /.+/,
   },
-  highway: {
-    highway: /.+/,
-  },
   water: {
     natural: ['water'],
   },
@@ -19,13 +16,19 @@ const TAG_MAP: {[key:string]: MMap} = {
     natural: ['fell', 'gress' /* deprecated */, 'grassland', 'wood' /* 树林 */],
     landcover: ['grass'],
   },
+  highway: {
+    highway: /.+/,
+  },
+  railway: {
+    railway: /.+/,
+  },
   fence: {
     barrier: ['fence'],
   },
   area: {
-    leisure: ['pitch'], // 球场
+    leisure: ['pitch', 'golf_course'], // 球场、高尔夫
     amenity: ['parking'], // 停车场
-  }
+  },
 }
 
 export const getType = (tags: OsmTags) => {

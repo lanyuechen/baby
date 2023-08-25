@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import OsmBuilding from '@/components/OsmMesh/Building';
 import OsmHighway from '@/components/OsmMesh/Highway';
+import OsmRailway from '@/components/OsmMesh/Railway';
 import OsmWaterArea from '@/components/OsmMesh/WaterArea';
 import OsmGrass from '@/components/OsmMesh/Grass';
 import OsmFence from '@/components/OsmMesh/Fence';
@@ -40,6 +41,8 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         buildings.push(this.createBuilding(d as BuildingData));
       } else if (d.type === 'highway') {
         // this.createHighway(d);
+      } else if (d.type === 'railway') {
+        this.createRailway(d);
       } else if (d.type === 'water') {
         waterAreas.push(this.createWaterArea(d));
       } else if (d.type === 'grass') {
@@ -81,6 +84,13 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     const highway = new OsmHighway(this.scene, this.tile.boundary, data);
     highway.parent = this;
     return highway;
+  }
+
+  createRailway(data: WayData) {
+    // 创建铁路
+    const railway = new OsmRailway(this.scene, this.tile.boundary, data);
+    railway.parent = this;
+    return railway;
   }
 
   createFence(data: WayData) {
