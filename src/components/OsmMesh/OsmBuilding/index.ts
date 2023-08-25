@@ -69,18 +69,18 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     material.useParallax = true;
     material.useParallaxOcclusion = true;
 
-    const metallicTexture = new BABYLON.Texture('textures/buildings/facades/block_window_mask.png', this.scene);
-    metallicTexture.vScale = vScale;
-    metallicTexture.uScale = uScale;
-    material.metallicTexture = metallicTexture;
+    // const metallicTexture = new BABYLON.Texture('textures/buildings/facades/block_window_mask.png', this.scene);
+    // metallicTexture.vScale = vScale;
+    // metallicTexture.uScale = uScale;
+    // material.metallicTexture = metallicTexture;
     material.roughness = 1;
     material.metallic = 0;
 
     // https://learn.foundry.com/zh-hans/modo/content/help/pages/shading_lighting/shader_items/gltf.html
-    material.useRoughnessFromMetallicTextureAlpha = false;
-    material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
-    material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
-    material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
+    // material.useRoughnessFromMetallicTextureAlpha = false;
+    // material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
+    // material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
+    // material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
 
     this.boundary?.setBoundary(material);
 

@@ -2,14 +2,14 @@ import * as BABYLON from '@babylonjs/core';
 import { WaterMaterial } from '@babylonjs/materials/water';
 import earcut from 'earcut';
 import Boundary from '@/components/Boundary';
-import type { WaterData } from '@/components/OsmService/typing';
+import type { WayData } from '@/components/OsmService/typing';
 
 export default class extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   boundary?: Boundary;
   waterMaterial?: WaterMaterial;
 
-  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: WaterData) {
+  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: WayData) {
     super('osmWaterarea', scene);
     this.scene = scene;
     this.boundary = boundary;
@@ -18,7 +18,7 @@ export default class extends BABYLON.AbstractMesh {
   }
 
   // 创建水域
-  create(data: WaterData) {
+  create(data: WayData) {
     this.waterMaterial = this.createMaterial(data);
 
     const vec3 = data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
@@ -33,7 +33,7 @@ export default class extends BABYLON.AbstractMesh {
     poly.checkCollisions = true;
   }
 
-  createMaterial(data: WaterData) {
+  createMaterial(data: WayData) {
     const material = new WaterMaterial('waterAreaMaterial', this.scene, new BABYLON.Vector2(256, 256));
     material.bumpTexture = new BABYLON.Texture('textures/surfaces/water_normal.png', this.scene); // Set the bump texture
     material.windForce = -10;

@@ -3,6 +3,8 @@ import { getPerimeter } from '@/utils/utils';
 import Boundary from '@/components/Boundary';
 import type { WayData } from '@/components/OsmService/typing';
 
+const FENCE_HEIGHT = 2;
+
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
   boundary?: Boundary;
@@ -15,7 +17,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     this.create(data);
   }
 
-  // 创建道路
+  // 创建Fence
   create(data: WayData) {
     if (data.nodes.length < 2) {
       return;
@@ -28,8 +30,9 @@ export default class OsmTile extends BABYLON.AbstractMesh {
       {
         shape: [
           new BABYLON.Vector3(0, 0, 0),
-          new BABYLON.Vector3(0, 200, 0),
+          new BABYLON.Vector3(0, FENCE_HEIGHT, 0),
         ],
+        cap: BABYLON.Mesh.CAP_ALL,
         invertUV: true,
         path: data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
         sideOrientation: BABYLON.Mesh.DOUBLESIDE,
@@ -39,41 +42,47 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     mesh.parent = this;
     mesh.material = material;
+    mesh.checkCollisions = true;
   }
 
   createMaterial(data: WayData) {
     const material = new BABYLON.PBRMaterial('fenceMaterial', this.scene);
     material.albedoColor = BABYLON.Color3.White();
-    // material.roughness = 1;
-    // material.metallic = 0;
+    material.roughness = 1;
+    material.metallic = 0;
 
     const perimeter = getPerimeter(data.nodes, false);
 
     const vScale = 1;
-    const uScale = perimeter;
+    const uScale = perimeter / FENCE_HEIGHT;
 
     const albedoTexture = new BABYLON.Texture('textures/surfaces/metal_fence_diffuse.png', this.scene);
     albedoTexture.vScale = vScale;
     albedoTexture.uScale = uScale;
     material.albedoTexture = albedoTexture;
+
     const bumpTexture = new BABYLON.Texture('textures/surfaces/metal_fence_normal.png', this.scene);
     bumpTexture.vScale = vScale;
     bumpTexture.uScale = uScale;
     material.bumpTexture = bumpTexture;
-    // material.ambientTexture = new BABYLON.Texture('textures/surfaces/metal_fence_mask.png', this.scene);
+    material.useParallax = true;
+    material.useParallaxOcclusion = true;
 
-    // const metallicTexture = new BABYLON.Texture('textures/surfaces/metal_fence_normal.png', this.scene);
+    const opacityTexture = new BABYLON.Texture('textures/surfaces/metal_fence_diffuse.png', this.scene);
+    opacityTexture.vScale = vScale;
+    opacityTexture.uScale = uScale;
+    material.opacityTexture = opacityTexture;
+    material.useAlphaFromAlbedoTexture = false;
+
+    // const metallicTexture = new BABYLON.Texture('textures/surfaces/metal_fence_mask.png', this.scene);
     // metallicTexture.vScale = vScale;
     // metallicTexture.uScale = uScale;
     // material.metallicTexture = metallicTexture;
-
-    material.opacityTexture = new BABYLON.Texture('textures/surfaces/metal_fence_diffuse.png', this.scene);
-    material.useAlphaFromAlbedoTexture = false;
     
-    material.useRoughnessFromMetallicTextureAlpha = false;
-    material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
-    material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
-    material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
+    // material.useRoughnessFromMetallicTextureAlpha = false;
+    // material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
+    // material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
+    // material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
 
     this.boundary?.setBoundary(material);
 
