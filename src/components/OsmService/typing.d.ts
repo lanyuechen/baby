@@ -41,13 +41,11 @@ export type BuildingData = {
   origin: OsmWayElement;  // 存储原始数据，测试用
 }
 
-export type WayType = 'way' | 'highway' | 'water' | 'fence' | 'grass';
-
 export type WayData = {
   id: number;
-  type: WayType;
+  type: string;
   nodes: NodeData[];
   origin: OsmWayElement;  // 存储原始数据，测试用
 }
 
-export type GeoData = BuildingData| WayData;
+export type GeoData = BuildingData | WayData;

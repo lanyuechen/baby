@@ -5,7 +5,7 @@ import OsmWaterArea from '@/components/OsmMesh/WaterArea';
 import OsmGrass from '@/components/OsmMesh/Grass';
 import OsmFence from '@/components/OsmMesh/Fence';
 import OsmGround from '@/components/OsmMesh/Ground';
-import OsmWay from '@/components/OsmMesh/Way';
+import OsmArea from '@/components/OsmMesh/Area';
 import OsmService, { BuildingData, WayData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
@@ -37,7 +37,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     data.forEach((d) => {
       if (d.type === 'building') {
-        buildings.push(this.createBuilding(d));
+        buildings.push(this.createBuilding(d as BuildingData));
       } else if (d.type === 'highway') {
         // this.createHighway(d);
       } else if (d.type === 'water') {
@@ -46,13 +46,13 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         this.createGrass(d);
       } else if (d.type === 'fence') {
         this.createFence(d);
-      } else if (d.type === 'way') {
-        // this.createWay(d);
+      } else if (d.type === 'area') {
+        this.createArea(d, BABYLON.Color3.Black());
       }
     });
 
     console.log('=====', data.filter(d => d.type === 'way'));
-    // window.data = data.filter(d => d.type === 'way');
+    Object.assign(window, {data: data.filter(d => d.type === 'way')})
 
     const ground = this.createGround(data.filter(d => d.type === 'water') as WayData[]);
 
@@ -105,11 +105,11 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     return grass;
   }
 
-  createWay(data: WayData) {
+  createArea(data: WayData, color: BABYLON.Color3) {
     // 创建其他区域
-    const waterArea = new OsmWay(this.scene, this.tile.boundary, data);
-    waterArea.parent = this;
-    return waterArea;
+    const area = new OsmArea(this.scene, this.tile.boundary, data, color);
+    area.parent = this;
+    return area;
   }
 
   createGround(warterDatas: WayData[]) {

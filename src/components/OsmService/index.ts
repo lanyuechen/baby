@@ -1,7 +1,8 @@
 import Coord, { PointLla } from '@/components/Coord';
 import { getPolygonDirection } from '@/utils/utils';
 import OverpassApi from './OverpassApi';
-import type { OsmData, OsmWayElement, GeoData, BuildingData, NodeData, WayData, WayType } from './typing';
+import { getType } from './tagMap';
+import type { OsmData, OsmWayElement, GeoData, BuildingData, NodeData, WayData } from './typing';
 
 const LEVEL_HEIGHT = 3;
 
@@ -41,51 +42,19 @@ export default class OsmService {
           nodes.reverse();
         }
 
-        if (OsmService.isBuilding(d)) {
+        const type = getType(d.tags);
+
+        if (type === 'building') {
           features.push(OsmService.parseBuildingData(d, nodes));
-        } else if (OsmService.isHighway(d)) {
-          features.push(OsmService.parseWayData(d, nodes, 'highway'));
-        } else if (OsmService.isWater(d)) {
-          features.push(OsmService.parseWayData(d, nodes, 'water'));
-        } else if (OsmService.isGrass(d)) {
-          features.push(OsmService.parseWayData(d, nodes, 'grass'));
-        } else if (OsmService.isFence(d)) {
-          features.push(OsmService.parseWayData(d, nodes, 'fence'));
-        } else if (OsmService.isWay(d)) {
-          features.push(OsmService.parseWayData(d, nodes));
+        } else if (type) {
+          features.push(OsmService.parseWayData(d, nodes, type));
+        } else {
+          features.push(OsmService.parseWayData(d, nodes, 'way'));
         }
       }
     });
   
     return features;
-  }
-
-  static isBuilding(data: OsmWayElement) {
-    return data.type === 'way' && !!data.tags?.['building'];
-  }
-
-  static isHighway(data: OsmWayElement) {
-    return data.type === 'way' && !!data.tags?.['highway'];
-  }
-
-  static isWater(data: OsmWayElement) {
-    return data.type === 'way' && data.tags?.['natural'] === 'water';
-  }
-
-  static isGrass(data: OsmWayElement) {
-    return data.type === 'way' && (
-      ['meadow', 'farmland', 'grass'].includes(data.tags?.['landuse']) ||
-      ['fell', 'gress' /* deprecated */, 'grassland'].includes(data.tags?.['natural']) ||
-      ['grass'].includes(data.tags?.['landcover'])
-    );
-  }
-
-  static isFence(data: OsmWayElement) {
-    return data.type === 'way' && data.tags?.['barrier'] === 'fence';
-  }
-
-  static isWay(data: OsmWayElement) {
-    return data.type === 'way';
   }
 
   static parseBuildingData(data: OsmWayElement, nodes: NodeData[]): BuildingData {
@@ -104,7 +73,7 @@ export default class OsmService {
     }
   }
 
-  static parseWayData(data: OsmWayElement, nodes: NodeData[], type: WayType = 'way'): WayData {
+  static parseWayData(data: OsmWayElement, nodes: NodeData[], type: string): WayData {
     return {
       origin: data,
   
