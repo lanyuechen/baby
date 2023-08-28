@@ -31,7 +31,7 @@ export default class MaterialHelper {
     material.roughness = 1;
     material.metallic = 0;
 
-    // this.boundary?.setBoundary(material);
+    this.scene.boundary?.setBoundary(material);
 
     return material;
   }
@@ -48,7 +48,7 @@ export default class MaterialHelper {
     material.bumpHeight = 0.1;
     material.waveLength = 0.1;
 
-    // this.boundary?.setBoundary(material);
+    this.scene.boundary?.setBoundary(material);
 
     return material;
   }
@@ -61,7 +61,7 @@ export default class MaterialHelper {
     material.albedoTexture = new BABYLON.Texture('textures/surfaces/grass_diffuse.png', this.scene);
     material.bumpTexture = new BABYLON.Texture('textures/surfaces/grass_normal.png', this.scene);
     
-    // this.boundary?.setBoundary(material);
+    this.scene.boundary?.setBoundary(material);
 
     return material;
   }

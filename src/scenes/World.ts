@@ -40,18 +40,21 @@ export default class WorldScene {
 
     // 创建天空盒子
     const skybox = Skybox.create(this.scene);
+    this.scene.skybox = skybox;
 
     // 创建世界边界（clipPanel）
     const boundary = new Boundary(this.scene, boundarySize);
+    this.scene.boundary = boundary;
 
     // 创建太阳（太阳模型、提供光照、阴影）
     const sun = new Sun(this.scene, { center });
+    this.scene.sun = sun;
 
     // 创建基础灯光，照亮世界
     const light = this.createBaseLight(this.scene);
 
     // 创建地图瓦片
-    const tile = new Tile(this.scene, tileSize, { center, boundary, skybox, sun });
+    const tile = new Tile(this.scene, tileSize, center);
     await tile.init();  // 初始化tile
 
     // 创建玩家

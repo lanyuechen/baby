@@ -1,7 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import { WayData } from '@/components/OsmService';
-import Boundary from '@/components/Boundary';
 import MaterialHelper from '@/components/MaterialHelper';
 
 export type OsmGroundOptions = {
@@ -12,13 +11,11 @@ export type OsmGroundOptions = {
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
-  boundary?: Boundary;
 
-  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, options: OsmGroundOptions) {
+  constructor(scene: BABYLON.Scene, options: OsmGroundOptions) {
     super('osmTile', scene);
 
     this.scene = scene;
-    this.boundary = boundary;
 
     this.create(options);
   }

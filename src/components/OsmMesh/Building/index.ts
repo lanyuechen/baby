@@ -1,17 +1,14 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
-import Boundary from '@/components/Boundary';
 import { getPerimeter } from '@/utils/utils';
 import type { BuildingData } from '@/components/OsmService/typing';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
-  boundary?: Boundary;
 
-  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: BuildingData) {
+  constructor(scene: BABYLON.Scene, data: BuildingData) {
     super('osmBuilding', scene);
     this.scene = scene;
-    this.boundary = boundary;
 
     this.create(data);
   }
@@ -82,7 +79,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     // material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
     // material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
 
-    this.boundary?.setBoundary(material);
+    this.scene.boundary?.setBoundary(material);
 
     return material;
   }

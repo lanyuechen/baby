@@ -1,14 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
-import Boundary from '@/components/Boundary';
-import Sun from '@/components/Sun';
 import OsmTile from './OsmTile';
-
-type TileOptions = {
-  center: any;
-  boundary?: Boundary;
-  skybox: BABYLON.Mesh;
-  sun?: Sun;
-}
 
 export default class extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
@@ -17,19 +8,13 @@ export default class extends BABYLON.AbstractMesh {
   currentOsmTile!: OsmTile;
   osmTiles: OsmTile[] = [];
   center: any;
-  boundary?: Boundary;
-  sun?: Sun;
-  skybox?: BABYLON.Mesh;
   
-  constructor(scene: BABYLON.Scene, tileSize: number, options: TileOptions) {
+  constructor(scene: BABYLON.Scene, tileSize: number, center: any) {
     super('tile', scene);
 
     this.scene = scene;
     this.tileSize = tileSize;
-    this.center = options.center;
-    this.boundary = options.boundary;
-    this.sun = options.sun;
-    this.skybox = options.skybox;
+    this.center = center;
     this.preLoadBoxSize = tileSize * 0.5;
   }
 

@@ -1,17 +1,14 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
-import Boundary from '@/components/Boundary';
 import MaterialHelper from '@/components/MaterialHelper';
 import type { WayData } from '@/components/OsmService/typing';
 
 export default class extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
-  boundary?: Boundary;
 
-  constructor(scene: BABYLON.Scene, boundary: Boundary | undefined, data: WayData, color?: BABYLON.Color3) {
+  constructor(scene: BABYLON.Scene, data: WayData, color?: BABYLON.Color3) {
     super('osmWay', scene);
     this.scene = scene;
-    this.boundary = boundary;
 
     this.create(data, color);
   }

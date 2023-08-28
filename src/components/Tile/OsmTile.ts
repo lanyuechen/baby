@@ -36,7 +36,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     data.forEach((d) => {
       if (d.type === 'building') {
         const building =  this.createBuilding(d as BuildingData);
-        this.tile.sun?.shadowGenerator.addShadowCaster(building, true);
+        this.scene.sun?.shadowGenerator.addShadowCaster(building, true);
         buildings.push(building as OsmBuilding);
       } else if (d.type === 'water') {
         const waterArea = this.createMesh(d, 'water');
@@ -53,12 +53,12 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     console.log('=====', data.filter(d => d.type === 'way'));
     Object.assign(window, {data: data.filter(d => d.type === 'way')})
 
-    const ground = this.createGround(data.filter(d => d.type === 'water') as WayData[]);
+    const ground = this.createGround(data.filter(d => ['water', 'grass'].includes(d.type)) as WayData[]);
 
     waterAreas.forEach((waterArea) => {
       waterArea.addToRenderList(
         ...buildings,
-        this.tile.skybox,
+        this.scene.skybox,
       );
     });
 
@@ -68,26 +68,25 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
   createMesh(data: GeoData, type: OsmMeshes.OsmType) {
     const OsmMesh = OsmMeshes[type] || OsmMeshes['area'];
-    const mesh = new OsmMesh(this.scene, this.tile.boundary, data);
+    const mesh = new OsmMesh(this.scene, data);
     mesh.parent = this;
     return mesh;
   }
 
   createBuilding(data: BuildingData) {
     // 创建建筑
-    const building = new OsmBuilding(this.scene, this.tile.boundary, data);
+    const building = new OsmBuilding(this.scene, data);
     building.parent = this;
     return building;
   }
 
   createGround(holes: WayData[]) {
-    const ground = new OsmGround(this.scene, this.tile.boundary, {
+    const ground = new OsmGround(this.scene, {
       width: this.tile.tileSize,
       height: this.tile.tileSize,
       holes,
     });
     ground.parent = this;
-    ground.position.y = -1;
     return ground;
   }
 
