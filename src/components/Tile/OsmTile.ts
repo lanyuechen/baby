@@ -40,7 +40,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
         buildings.push(building as OsmBuilding);
       } else if (d.type === 'water') {
         const waterArea = this.createMesh(d, 'water');
-        waterArea.position.y = -5;
         waterAreas.push(waterArea as WaterArea);
       } else if (d.type === 'way') {
         
@@ -59,7 +58,6 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     waterAreas.forEach((waterArea) => {
       waterArea.addToRenderList(
         ...buildings,
-        ground,
         this.tile.skybox,
       );
     });
@@ -82,12 +80,11 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     return building;
   }
 
-  createGround(warterDatas: WayData[]) {
+  createGround(holes: WayData[]) {
     const ground = new OsmGround(this.scene, this.tile.boundary, {
       width: this.tile.tileSize,
-      height: 100,
-      depth: this.tile.tileSize,
-      data: warterDatas,
+      height: this.tile.tileSize,
+      holes,
     });
     ground.parent = this;
     ground.position.y = -1;

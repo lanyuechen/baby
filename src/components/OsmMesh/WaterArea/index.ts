@@ -17,9 +17,14 @@ export default class extends BABYLON.AbstractMesh {
     this.create(data);
   }
 
-  // 创建水域
   create(data: WayData) {
-    this.waterMaterial = this.createMaterial(data);
+    this.createWaterArea(data);
+    this.createBank(data);
+  }
+
+  // 创建水域
+  createWaterArea(data: WayData) {
+    this.waterMaterial = this.createMaterial();
 
     const vec3 = data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y));
     const poly = BABYLON.MeshBuilder.CreatePolygon(
@@ -29,11 +34,12 @@ export default class extends BABYLON.AbstractMesh {
       earcut,
     );
     poly.parent = this;
+    poly.position.y = -2;
     poly.material = this.waterMaterial;
     poly.checkCollisions = true;
   }
 
-  createMaterial(data: WayData) {
+  createMaterial() {
     const material = new WaterMaterial('waterAreaMaterial', this.scene, new BABYLON.Vector2(256, 256));
     material.bumpTexture = new BABYLON.Texture('textures/surfaces/water_normal.png', this.scene); // Set the bump texture
     material.windForce = -10;
@@ -47,6 +53,27 @@ export default class extends BABYLON.AbstractMesh {
     this.boundary?.setBoundary(material);
 
     return material;
+  }
+
+  createBank(data: WayData) {
+    const mesh = BABYLON.MeshBuilder.ExtrudeShape(
+      `waterarea-bank-${data.id}`,
+      {
+        shape: [
+          new BABYLON.Vector3(0, 0, 0),
+          new BABYLON.Vector3(0, -10, 0),
+        ],
+        sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+        path: data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
+      }
+    );
+    mesh.parent = this;
+
+    const material = new BABYLON.PBRMaterial('bank-material', this.scene);
+    material.albedoColor = BABYLON.Color3.White();
+    material.roughness = 1;
+    material.metallic = 0;
+    mesh.material = material;
   }
 
   addToRenderList(...nodes: any[]) {

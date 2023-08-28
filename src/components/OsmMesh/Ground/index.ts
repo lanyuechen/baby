@@ -6,8 +6,7 @@ import Boundary from '@/components/Boundary';
 export type OsmGroundOptions = {
   width: number;
   height: number;
-  depth: number;
-  data: WayData[];
+  holes: WayData[];
 }
 
 export default class OsmTile extends BABYLON.AbstractMesh {
@@ -24,54 +23,53 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   create(options: OsmGroundOptions) {
-    const { data, width, height, depth } = options;
+    const { holes, width, height } = options;
 
-    const box = BABYLON.MeshBuilder.CreateBox(
-      'box',
+    const plane = BABYLON.MeshBuilder.CreatePolygon(
+      '',
       {
-        width,
-        height,
-        depth,
+        shape: [
+          new BABYLON.Vector3(0, 0, 0),
+          new BABYLON.Vector3(width, 0, 0),
+          new BABYLON.Vector3(width, 0, height),
+          new BABYLON.Vector3(0, 0, height),
+        ],
+        depth: 1,
       },
       this.scene,
+      earcut,
     );
-    box.position.y = -50;
-    const groundCSG = BABYLON.CSG.FromMesh(box);
+    const groundCSG = BABYLON.CSG.FromMesh(plane);
 
-    data.forEach((WayData) => {
-      const mesh = BABYLON.MeshBuilder.ExtrudePolygon(
-        'water',
+    holes.forEach((WayData) => {
+      const mesh = BABYLON.MeshBuilder.CreatePolygon(
+        '',
         {
           shape: WayData.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)),
-          depth: 100,
+          depth: 1,
         },
         this.scene,
         earcut,
       );
-      mesh.position.x = -width / 2;
-      mesh.position.z = -depth / 2;
 
       const csg = BABYLON.CSG.FromMesh(mesh);
       groundCSG.subtractInPlace(csg);
       mesh.dispose();
     });
-    box.dispose();
 
     const ground = groundCSG.toMesh('ground');
+    plane.dispose();
     
     const material = new BABYLON.PBRMaterial('groundMaterial', this.scene);
 
     material.metallic = 0;
     material.roughness = 1.0;
     material.albedoColor = new BABYLON.Color3(1, 1, 1);
-    // material.albedoTexture = new BABYLON.Texture('textures/surfaces/soil_diffuse.png', this.scene);
 
     this.boundary?.setBoundary(material);
 
     ground.checkCollisions = true;
     ground.material = material;
-    ground.position.x = width / 2;
-    ground.position.z = depth / 2;
     ground.parent = this;
     ground.receiveShadows = true;
     return ground;

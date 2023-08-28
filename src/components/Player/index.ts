@@ -61,6 +61,6 @@ export default class Player extends BABYLON.AbstractMesh {
       PLAYER_SPEED: 50,
     });
     cc.start();
-    // cc.activeCamera();
+    cc.activeCamera();
   }
 }
