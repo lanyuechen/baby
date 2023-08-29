@@ -1,16 +1,16 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import { getPerimeter } from '@/utils/utils';
-import type { BuildingData } from '@/components/OsmService/typing';
+import type { WayData, BuildingData } from '@/components/OsmService/typing';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
 
-  constructor(scene: BABYLON.Scene, data: BuildingData) {
+  constructor(scene: BABYLON.Scene, data: WayData) {
     super('osmBuilding', scene);
     this.scene = scene;
 
-    this.create(data);
+    this.create(data as BuildingData);
   }
 
   // 创建建筑

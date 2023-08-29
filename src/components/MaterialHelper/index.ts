@@ -50,6 +50,8 @@ export default class MaterialHelper {
     material.bumpHeight = 0.1;
     material.waveLength = 0.1;
 
+    material.addToRenderList(this.scene.skybox);  // 添加天空盒子渲染
+
     this.scene.boundary?.setBoundary(material);
 
     return material;

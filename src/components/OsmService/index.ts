@@ -2,7 +2,7 @@ import Coord, { PointLla } from '@/components/Coord';
 import { getPolygonDirection } from '@/utils/utils';
 import OverpassApi from './OverpassApi';
 import { getType } from './tagMap';
-import type { OsmData, OsmWayElement, GeoData, BuildingData, NodeData, WayData } from './typing';
+import type { OsmData, OsmWayElement, OsmNodeElement, BuildingData, NodeData, WayData } from './typing';
 
 const LEVEL_HEIGHT = 3;
 
@@ -22,7 +22,7 @@ export default class OsmService {
 
   static parseData(center: PointLla, radius: number, osmData: OsmData) {
     const nodeMap: {[id: number]: NodeData} = {};
-    const features: GeoData[] = [];
+    const features: WayData[] = [];
     const coord = new Coord(center);
 
     // 因为默认osm数据node在前，所以可以在一个循环内处理
@@ -85,4 +85,10 @@ export default class OsmService {
       nodes,
     }
   }
+
+  // static parseNodeData(data: OsmNodeElement, type: string): NodeData {
+  //   return {
+      
+  //   }
+  // }
 }

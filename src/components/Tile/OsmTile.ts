@@ -4,7 +4,7 @@ import OsmWaterArea from '@/components/OsmMesh/WaterArea';
 import OsmGround from '@/components/OsmMesh/Ground';
 import WaterArea from '@/components/OsmMesh/WaterArea';
 import * as OsmMeshes from '@/components/OsmMesh';
-import OsmService, { GeoData, BuildingData, WayData } from '@/components/OsmService';
+import OsmService, { BuildingData, WayData } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
 
@@ -30,56 +30,43 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     console.log('geodata', data);
 
-    const waterAreas: OsmWaterArea[] = [];
-    const buildings: OsmBuilding[] = [];
-
     data.forEach((d) => {
-      if (d.type === 'building') {
-        const building =  this.createBuilding(d as BuildingData);
+      if (d.type === 'building') {      // 建筑
+        const building = this.createMesh(d)
         this.scene.sun?.shadowGenerator.addShadowCaster(building, true);
-        buildings.push(building as OsmBuilding);
-      } else if (d.type === 'water') {
-        const waterArea = this.createMesh(d, 'water');
-        waterAreas.push(waterArea as WaterArea);
-      } else if (d.type === 'unknown') {
+      } else if (d.type === 'water') {  // 水域
+        this.createMesh(d);
+      } else if (d.type === 'grass') {  // 草地
+        this.createMesh(d);
+      } else if (d.type === 'fence') {  // 篱笆
+        this.createMesh(d);
+      } else if (d.type === 'railway') {  // 铁路
+        this.createMesh(d);
+      } else if (d.type === 'highway') {  // 公路
+        // this.createMesh(d);
+      } else if (d.type === 'area') {     // 其他区域
+        this.createMesh(d);
+      } else if (d.type === 'unknown') {  // 未知
         
-      } else if (d.type === 'highway') {
-        
-      } else {
-        this.createMesh(d, d.type as OsmMeshes.OsmType);
       }
     });
 
-    console.log('=====', data.filter(d => d.type === 'unknown'));
-    Object.assign(window, {data: data.filter(d => d.type === 'unknown')})
+    // 调试用
+    navigator.clipboard.writeText(JSON.stringify(data));
 
-    const ground = this.createGround(
+    this.createGround(
       data.filter(d => ['water', 'grass'].includes(d.type)) as WayData[]
     );
-
-    waterAreas.forEach((waterArea) => {
-      waterArea.addToRenderList(
-        ...buildings,
-        this.scene.skybox,
-      );
-    });
 
     this.position.x = this.offsetX * this.tile.tileSize;
     this.position.z = this.offsetY * this.tile.tileSize;
   }
 
-  createMesh(data: GeoData, type: OsmMeshes.OsmType) {
-    const OsmMesh = OsmMeshes[type] || OsmMeshes['area'];
+  createMesh(data: WayData) {
+    const OsmMesh = OsmMeshes[data.type as OsmMeshes.OsmType] || OsmMeshes['area'];
     const mesh = new OsmMesh(this.scene, data);
     mesh.parent = this;
     return mesh;
-  }
-
-  createBuilding(data: BuildingData) {
-    // 创建建筑
-    const building = new OsmBuilding(this.scene, data);
-    building.parent = this;
-    return building;
   }
 
   createGround(holes: WayData[]) {
