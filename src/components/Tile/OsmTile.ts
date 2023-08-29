@@ -41,7 +41,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
       } else if (d.type === 'water') {
         const waterArea = this.createMesh(d, 'water');
         waterAreas.push(waterArea as WaterArea);
-      } else if (d.type === 'way') {
+      } else if (d.type === 'unknown') {
         
       } else if (d.type === 'highway') {
         
@@ -50,10 +50,12 @@ export default class OsmTile extends BABYLON.AbstractMesh {
       }
     });
 
-    console.log('=====', data.filter(d => d.type === 'way'));
-    Object.assign(window, {data: data.filter(d => d.type === 'way')})
+    console.log('=====', data.filter(d => d.type === 'unknown'));
+    Object.assign(window, {data: data.filter(d => d.type === 'unknown')})
 
-    const ground = this.createGround(data.filter(d => ['water', 'grass'].includes(d.type)) as WayData[]);
+    const ground = this.createGround(
+      data.filter(d => ['water', 'grass'].includes(d.type)) as WayData[]
+    );
 
     waterAreas.forEach((waterArea) => {
       waterArea.addToRenderList(

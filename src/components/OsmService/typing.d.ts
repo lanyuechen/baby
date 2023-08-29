@@ -45,6 +45,8 @@ export type WayData = {
   id: number;
   type: string;
   nodes: NodeData[];
+  height: number;
+  minHeight: number;
   origin: OsmWayElement;  // 存储原始数据，测试用
 }
 

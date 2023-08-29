@@ -50,5 +50,6 @@ export const getType = (tags: OsmTags) => {
         }
       }
     }
+    return 'unknown';
   }
 }

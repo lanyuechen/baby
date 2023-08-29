@@ -46,10 +46,10 @@ export default class OsmService {
 
         if (type === 'building') {
           features.push(OsmService.parseBuildingData(d, nodes));
+        } else if (type === 'unknown') {
+          features.push(OsmService.parseWayData(d, nodes, 'unknown'));
         } else if (type) {
           features.push(OsmService.parseWayData(d, nodes, type));
-        } else {
-          features.push(OsmService.parseWayData(d, nodes, 'way'));
         }
       }
     });
@@ -64,8 +64,8 @@ export default class OsmService {
       id: data.id,
       type: 'building',
       nodes,
-      height: parseInt(data.tags['height']) || (parseInt(data.tags?.['building:levels']??1) * LEVEL_HEIGHT),
-      minHeight: parseInt(data.tags['min_height']) || (parseInt(data.tags?.['building:min_level']??0) * LEVEL_HEIGHT),
+      height: parseInt(data.tags['height']) || (parseInt(data.tags['building:levels']??1) * LEVEL_HEIGHT),
+      minHeight: parseInt(data.tags['min_height']) || (parseInt(data.tags['building:min_level']??0) * LEVEL_HEIGHT),
       color: data.tags['building:colour'] || '#ffffff',
       roofColor: data.tags['roof:colour'] || '#ffffff',
       material: data.tags['building:material'] || data.tags['material'],
@@ -74,11 +74,14 @@ export default class OsmService {
   }
 
   static parseWayData(data: OsmWayElement, nodes: NodeData[], type: string): WayData {
+    const height = parseInt(data.tags['layer']||'0') * 10;
     return {
       origin: data,
   
       id: data.id,
       type,
+      height,
+      minHeight: height,
       nodes,
     }
   }
