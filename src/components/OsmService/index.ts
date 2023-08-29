@@ -2,7 +2,7 @@ import Coord, { PointLla } from '@/components/Coord';
 import { getPolygonDirection } from '@/utils/utils';
 import OverpassApi from './OverpassApi';
 import { getType } from './tagMap';
-import type { OsmData, OsmWayElement, OsmNodeElement, BuildingData, NodeData, WayData } from './typing';
+import type { Geo, Osm } from './typing';
 
 const LEVEL_HEIGHT = 3;
 
@@ -20,9 +20,9 @@ export default class OsmService {
     return data;
   }
 
-  static parseData(center: PointLla, radius: number, osmData: OsmData) {
-    const nodeMap: {[id: number]: NodeData} = {};
-    const features: WayData[] = [];
+  static parseData(center: PointLla, radius: number, osmData: Osm.Data) {
+    const nodeMap: {[id: number]: Geo.Node} = {};
+    const features: Geo.Way[] = [];
     const coord = new Coord(center);
 
     // 因为默认osm数据node在前，所以可以在一个循环内处理
@@ -57,7 +57,7 @@ export default class OsmService {
     return features;
   }
 
-  static parseBuildingData(data: OsmWayElement, nodes: NodeData[]): BuildingData {
+  static parseBuildingData(data: Osm.Way, nodes: Geo.Node[]): Geo.Building {
     return {
       origin: data,
   
@@ -73,7 +73,7 @@ export default class OsmService {
     }
   }
 
-  static parseWayData(data: OsmWayElement, nodes: NodeData[], type: string): WayData {
+  static parseWayData(data: Osm.Way, nodes: Geo.Node[], type: string): Geo.Way {
     const height = parseInt(data.tags['layer']||'0') * 10;
     return {
       origin: data,

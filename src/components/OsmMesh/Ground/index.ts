@@ -1,12 +1,12 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
-import { WayData } from '@/components/OsmService';
+import { Geo } from '@/components/OsmService';
 import MaterialHelper from '@/components/MaterialHelper';
 
 export type OsmGroundOptions = {
   width: number;
   height: number;
-  holes: WayData[];
+  holes: Geo.Way[];
 }
 
 export default class OsmTile extends BABYLON.AbstractMesh {

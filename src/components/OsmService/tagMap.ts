@@ -1,4 +1,4 @@
-import type { OsmTags } from './typing';
+import type { Osm } from './typing';
 
 type MMap = {
   [key: string]: string[] | RegExp;
@@ -31,7 +31,7 @@ const TAG_MAP: {[key:string]: MMap} = {
   },
 }
 
-export const getType = (tags: OsmTags) => {
+export const getType = (tags: Osm.Tags) => {
   if (tags) {
     for (let type in TAG_MAP) {
       const mMap = TAG_MAP[type];

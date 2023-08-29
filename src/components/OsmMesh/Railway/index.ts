@@ -1,12 +1,12 @@
 import * as BABYLON from '@babylonjs/core';
-import type { WayData } from '@/components/OsmService/typing';
 import line2D from '@/utils/line2D';
 import MaterialHelper from '@/components/MaterialHelper';
+import type { Geo } from '@/components/OsmService/typing';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
 
-  constructor(scene: BABYLON.Scene, data: WayData) {
+  constructor(scene: BABYLON.Scene, data: Geo.Way) {
     super('osmRailway', scene);
     this.scene = scene;
 
@@ -14,7 +14,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   // 创建道路
-  create(data: WayData) {
+  create(data: Geo.Way) {
     if (data.nodes.length < 2) {
       return;
     }

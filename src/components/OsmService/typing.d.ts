@@ -1,46 +1,50 @@
-export type OsmTags = {
-  [key: string]: string;
+export declare namespace Osm {
+  type Tags = {
+    [key: string]: string;
+  }
+
+  type Way = {
+    type: 'way';
+    id: number;
+    nodes: number[];
+    tags: Osm.Tags;
+  }
+
+  type Node = {
+    type: 'node';
+    id: number;
+    lon: number;
+    lat: number;
+    tags?: Osm.Tags;
+  }
+
+  type Element = Osm.Node | Osm.Way;
+
+  type Data = {
+    elements: Element[];
+  }
 }
 
-export type OsmWayElement = {
-  type: 'way';
-  id: number;
-  nodes: number[];
-  tags: OsmTags;
-}
+export declare namespace Geo {
+  type Node = Osm.Node & {
+    x: number;
+    y: number;
+  }
 
-export type OsmNodeElement = {
-  type: 'node';
-  id: number;
-  lon: number;
-  lat: number;
-  tags?: OsmTags;
-}
+  type Way = {
+    id: number;
+    type: string;
+    nodes: NodeData[];
+    height: number;
+    minHeight: number;
+    origin: Osm.Way;  // 存储原始数据，测试用
+  }
 
-export type OsmElement = OsmNodeElement | OsmWayElement;
-
-export type OsmData = {
-  elements: OsmElement[];
-}
-
-export type NodeData = OsmNodeElement & {
-  x: number;
-  y: number;
-}
-
-export type WayData = {
-  id: number;
-  type: string;
-  nodes: NodeData[];
-  height: number;
-  minHeight: number;
-  origin: OsmWayElement;  // 存储原始数据，测试用
-}
-
-export type BuildingData = WayData & {
-  type: 'building';
-  color: string;
-  roofColor: string;
-  material?: string;
-  roofMaterial?: string;
+  type Building = Geo.Way & {
+    type: 'building';
+    color: string;
+    roofColor: string;
+    material?: string;
+    roofMaterial?: string;
+  }
 }

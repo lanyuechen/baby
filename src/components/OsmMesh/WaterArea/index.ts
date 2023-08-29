@@ -1,25 +1,25 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
-import type { WayData } from '@/components/OsmService/typing';
 import MaterialHelper from '@/components/MaterialHelper';
+import type { Geo } from '@/components/OsmService/typing';
 
 export default class extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
 
-  constructor(scene: BABYLON.Scene, data: WayData) {
+  constructor(scene: BABYLON.Scene, data: Geo.Way) {
     super('osmWaterarea', scene);
     this.scene = scene;
 
     this.create(data);
   }
 
-  create(data: WayData) {
+  create(data: Geo.Way) {
     this.createWaterArea(data);
     this.createBank(data);
   }
 
   // 创建水域
-  createWaterArea(data: WayData) {
+  createWaterArea(data: Geo.Way) {
     const mesh = BABYLON.MeshBuilder.CreatePolygon(
       `waterArea-${data.id}`,
       { shape: data.nodes.map((node: any) => new BABYLON.Vector3(node.x, 0, node.y)) },
@@ -32,7 +32,7 @@ export default class extends BABYLON.AbstractMesh {
     mesh.checkCollisions = true;
   }
 
-  createBank(data: WayData) {
+  createBank(data: Geo.Way) {
     const mesh = BABYLON.MeshBuilder.ExtrudeShape(
       `waterarea-bank-${data.id}`,
       {

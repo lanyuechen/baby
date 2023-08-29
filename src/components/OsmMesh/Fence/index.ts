@@ -1,13 +1,13 @@
 import * as BABYLON from '@babylonjs/core';
 import { getPerimeter } from '@/utils/utils';
-import type { WayData } from '@/components/OsmService/typing';
+import type { Geo } from '@/components/OsmService/typing';
 
 const FENCE_HEIGHT = 2;
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
 
-  constructor(scene: BABYLON.Scene, data: WayData) {
+  constructor(scene: BABYLON.Scene, data: Geo.Way) {
     super('osmBuilding', scene);
     this.scene = scene;
 
@@ -15,7 +15,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   // 创建Fence
-  create(data: WayData) {
+  create(data: Geo.Way) {
     if (data.nodes.length < 2) {
       return;
     }
@@ -42,7 +42,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     mesh.checkCollisions = true;
   }
 
-  createMaterial(data: WayData) {
+  createMaterial(data: Geo.Way) {
     const material = new BABYLON.PBRMaterial('fenceMaterial', this.scene);
     material.albedoColor = BABYLON.Color3.White();
     material.roughness = 1;

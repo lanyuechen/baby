@@ -1,20 +1,20 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import { getPerimeter } from '@/utils/utils';
-import type { WayData, BuildingData } from '@/components/OsmService/typing';
+import type { Geo } from '@/components/OsmService/typing';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
   scene: BABYLON.Scene;
 
-  constructor(scene: BABYLON.Scene, data: WayData) {
+  constructor(scene: BABYLON.Scene, data: Geo.Way) {
     super('osmBuilding', scene);
     this.scene = scene;
 
-    this.create(data as BuildingData);
+    this.create(data as Geo.Building);
   }
 
   // 创建建筑
-  create(data: BuildingData) {
+  create(data: Geo.Building) {
     const material = this.createMaterial(data);
 
     const faceUV = new Array(data.nodes.length + 2);
@@ -43,7 +43,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     poly.position.y = data.height;
   }
 
-  createMaterial(data: BuildingData) {
+  createMaterial(data: Geo.Building) {
     const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
 
     material.albedoColor = BABYLON.Color3.FromHexString(data.color);   // 设置建筑颜色

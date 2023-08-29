@@ -1,10 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
-import OsmBuilding from '@/components/OsmMesh/Building';
-import OsmWaterArea from '@/components/OsmMesh/WaterArea';
 import OsmGround from '@/components/OsmMesh/Ground';
-import WaterArea from '@/components/OsmMesh/WaterArea';
 import * as OsmMeshes from '@/components/OsmMesh';
-import OsmService, { BuildingData, WayData } from '@/components/OsmService';
+import OsmService, { Geo } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
 import type Tile from './index';
 
@@ -55,21 +52,21 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     navigator.clipboard.writeText(JSON.stringify(data));
 
     this.createGround(
-      data.filter(d => ['water', 'grass'].includes(d.type)) as WayData[]
+      data.filter(d => ['water', 'grass'].includes(d.type)) as Geo.Way[]
     );
 
     this.position.x = this.offsetX * this.tile.tileSize;
     this.position.z = this.offsetY * this.tile.tileSize;
   }
 
-  createMesh(data: WayData) {
+  createMesh(data: Geo.Way) {
     const OsmMesh = OsmMeshes[data.type as OsmMeshes.OsmType] || OsmMeshes['area'];
     const mesh = new OsmMesh(this.scene, data);
     mesh.parent = this;
     return mesh;
   }
 
-  createGround(holes: WayData[]) {
+  createGround(holes: Geo.Way[]) {
     const ground = new OsmGround(this.scene, {
       width: this.tile.tileSize,
       height: this.tile.tileSize,
