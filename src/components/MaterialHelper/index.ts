@@ -7,7 +7,10 @@ export default class MaterialHelper {
   basicMaterial: BABYLON.Material;
   grassMaterial: BABYLON.Material;
   railwayMaterial: BABYLON.Material;
+  buildingMaterial: BABYLON.Material;
   waterMaterial: WaterMaterial;
+
+  buildingTexture: {[key: string]: BABYLON.Texture};
 
   static instance: MaterialHelper;
   static getInstance(scene: BABYLON.Scene) {
@@ -20,10 +23,13 @@ export default class MaterialHelper {
   constructor(scene: BABYLON.Scene) {
     this.scene = scene;
 
+    this.buildingTexture = this.createBuildingTexture();
+
     this.basicMaterial = this.createBasicMaterial();
     this.waterMaterial = this.createWaterMaterial();
     this.grassMaterial = this.createGrassMaterial();
     this.railwayMaterial = this.createRailwayMaterial();
+    this.buildingMaterial = this.createBuildingMaterial();
   }
 
   // 基础材质
@@ -57,6 +63,31 @@ export default class MaterialHelper {
     return material;
   }
 
+  // 建筑材质
+  createBuildingMaterial() {
+    const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
+
+    material.useParallax = true;
+    material.useParallaxOcclusion = true;
+
+    // const metallicTexture = new BABYLON.Texture('textures/buildings/facades/block_window_mask.png', this.scene);
+    // metallicTexture.vScale = vScale;
+    // metallicTexture.uScale = uScale;
+    // material.metallicTexture = metallicTexture;
+    material.roughness = 1;
+    material.metallic = 0;
+
+    // https://learn.foundry.com/zh-hans/modo/content/help/pages/shading_lighting/shader_items/gltf.html
+    // material.useRoughnessFromMetallicTextureAlpha = false;
+    // material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
+    // material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
+    // material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
+
+    this.scene.boundary?.setBoundary(material);
+
+    return material;
+  }
+
   // 草地材质
   createGrassMaterial() {
     const material = new BABYLON.PBRMaterial('', this.scene);
@@ -80,5 +111,13 @@ export default class MaterialHelper {
     this.scene.boundary?.setBoundary(material);
 
     return material;
+  }
+
+  // 建筑物贴图
+  createBuildingTexture() {
+    const albedoTexture = new BABYLON.Texture('textures/buildings/facades/block_window_diffuse.png', this.scene);
+    const bumpTexture = new BABYLON.Texture('textures/buildings/facades/block_window_normal.png', this.scene);
+
+    return { albedoTexture, bumpTexture };
   }
 }

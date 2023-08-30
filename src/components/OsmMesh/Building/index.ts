@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import earcut from 'earcut';
 import { getPerimeter } from '@/utils/utils';
+import MaterialHelper from '@/components/MaterialHelper';
 import type { Geo } from '@/components/OsmService/typing';
 
 export default class OsmTile extends BABYLON.AbstractMesh {
@@ -44,7 +45,8 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   createMaterial(data: Geo.Building) {
-    const material = new BABYLON.PBRMaterial('buildingMaterial', this.scene);
+    const { buildingMaterial, buildingTexture } = MaterialHelper.getInstance(this.scene);
+    const material = buildingMaterial.clone('') as BABYLON.PBRMaterial;
 
     material.albedoColor = BABYLON.Color3.FromHexString(data.color);   // 设置建筑颜色
 
@@ -53,33 +55,14 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     const vScale = (data.height - data.minHeight) / 3;
     const uScale = perimeter / 3;
     
-    const albedoTexture = new BABYLON.Texture('textures/buildings/facades/block_window_diffuse.png', this.scene);
+    const albedoTexture = buildingTexture.albedoTexture.clone();
     albedoTexture.vScale = vScale;
     albedoTexture.uScale = uScale;
     material.albedoTexture = albedoTexture
     
-    const bumpTexture = new BABYLON.Texture('textures/buildings/facades/block_window_normal.png', this.scene);
+    const bumpTexture = buildingTexture.bumpTexture.clone();
     bumpTexture.vScale = vScale;
     bumpTexture.uScale = uScale;
-    material.bumpTexture = bumpTexture;
-
-    material.useParallax = true;
-    material.useParallaxOcclusion = true;
-
-    // const metallicTexture = new BABYLON.Texture('textures/buildings/facades/block_window_mask.png', this.scene);
-    // metallicTexture.vScale = vScale;
-    // metallicTexture.uScale = uScale;
-    // material.metallicTexture = metallicTexture;
-    material.roughness = 1;
-    material.metallic = 0;
-
-    // https://learn.foundry.com/zh-hans/modo/content/help/pages/shading_lighting/shader_items/gltf.html
-    // material.useRoughnessFromMetallicTextureAlpha = false;
-    // material.useRoughnessFromMetallicTextureGreen = true;       // glTF Roughness涡流通道必须是Green
-    // material.useMetallnessFromMetallicTextureBlue = true;       // glTF Metallic涡流通道必须是Blue
-    // material.useAmbientOcclusionFromMetallicTextureRed = true;  // glTF Ambient Occlusion涡流通道必须是Red
-
-    this.scene.boundary?.setBoundary(material);
 
     return material;
   }
