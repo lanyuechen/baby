@@ -29,7 +29,7 @@ export default class extends BABYLON.AbstractMesh {
     this.position.x = -position.x;
     this.position.z = -position.z;
 
-    this.updatetile();
+    // this.updatetile();
   }
 
   updatetile() {

@@ -31,8 +31,8 @@ export default class OsmTile extends BABYLON.AbstractMesh {
 
     data.forEach((d) => {
       if (d.type === 'building') {      // 建筑
-        const building = this.createMesh(d as Geo.Way)
-        this.scene.sun?.shadowGenerator.addShadowCaster(building, true);
+        // const building = this.createMesh(d as Geo.Way)
+        // this.scene.sun?.shadowGenerator.addShadowCaster(building, true);
       } else if (d.type === 'water') {  // 水域
         this.createMesh(d as Geo.Way);
       } else if (d.type === 'grass') {  // 草地

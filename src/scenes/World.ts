@@ -16,7 +16,8 @@ center = { lon: 116.4734, lat: 39.9350 }; // 朝阳公园
 
 const tileSize = 1000;
 const boundarySize = tileSize * 0.4;
-const cameraDistance = 1000;
+const CAMERA_DISTANCE_MAX = 1000;
+const CAMERA_DISTANCE_MIN = 10;
 
 export default class WorldScene {
   engine: BABYLON.Engine;
@@ -92,15 +93,15 @@ export default class WorldScene {
       'camera',
       -Math.PI / 2,
       Math.PI / 4,
-      cameraDistance,
-      new BABYLON.Vector3(0, 1.8, 0), // 相机指向头顶位置
+      CAMERA_DISTANCE_MAX,
+      new BABYLON.Vector3(0, 3, 0), // 相机指向头顶位置
       scene,
     );
   
     // 相机控制
-    camera.lowerRadiusLimit = 2;
-    // camera.upperRadiusLimit = cameraDistance * 2;
-    camera.lowerBetaLimit = 0.1;  // 由于技术原因，将beta设置为0或者PI(180°)会引起问题，在这种情况下可以将beta在0或PI的基础上偏移0.1弧度（0.6°）
+    camera.lowerRadiusLimit = CAMERA_DISTANCE_MIN;
+    // camera.upperRadiusLimit = CAMERA_DISTANCE_MAX;
+    camera.lowerBetaLimit = 0.1;      // 由于技术原因，将beta设置为0或者PI(180°)会引起问题，在这种情况下可以将beta在0或PI的基础上偏移0.1弧度（0.6°）
     camera.upperBetaLimit = Math.PI;  // 远距离观察室会导致相机进入到地面下，需要限制
     camera.wheelPrecision = 0.3;
 
