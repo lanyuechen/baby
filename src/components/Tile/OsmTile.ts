@@ -40,7 +40,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
       } else if (d.type === 'fence') {  // 篱笆
         // this.createMesh(d as Geo.Way);
       } else if (d.type === 'railway') {  // 铁路
-        // this.createMesh(d as Geo.Way);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'highway') {  // 公路
         // this.createMesh(d as Geo.Way);
       } else if (d.type === 'area') {     // 其他区域

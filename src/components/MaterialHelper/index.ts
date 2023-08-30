@@ -6,6 +6,7 @@ export default class MaterialHelper {
 
   basicMaterial: BABYLON.Material;
   grassMaterial: BABYLON.Material;
+  highwayMaterial: BABYLON.Material;
   railwayMaterial: BABYLON.Material;
   buildingMaterial: BABYLON.Material;
   waterMaterial: WaterMaterial;
@@ -28,6 +29,7 @@ export default class MaterialHelper {
     this.basicMaterial = this.createBasicMaterial();
     this.waterMaterial = this.createWaterMaterial();
     this.grassMaterial = this.createGrassMaterial();
+    this.highwayMaterial = this.createHighwayMaterial();
     this.railwayMaterial = this.createRailwayMaterial();
     this.buildingMaterial = this.createBuildingMaterial();
   }
@@ -103,6 +105,18 @@ export default class MaterialHelper {
 
   // 铁路材质
   createRailwayMaterial() {
+    const material = new BABYLON.PBRMaterial('', this.scene);
+    material.albedoColor = BABYLON.Color3.Black();
+    material.roughness = 1;
+    material.metallic = 0;
+
+    this.scene.boundary?.setBoundary(material);
+
+    return material;
+  }
+
+  // 公路材质
+  createHighwayMaterial() {
     const material = new BABYLON.PBRMaterial('', this.scene);
     material.albedoColor = BABYLON.Color3.Gray();
     material.roughness = 1;
