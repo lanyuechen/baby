@@ -23,7 +23,7 @@ export default class Osm {
     return this.fetchApi(`
       [out:json];
       (
-        way(around:${radius},${center.lat},${center.lon});>;
+        nwr(around:${radius},${center.lat},${center.lon});>;
       );
       out body;
     `);

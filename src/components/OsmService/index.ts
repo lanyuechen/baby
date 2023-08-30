@@ -22,27 +22,31 @@ export default class OsmService {
 
   static parseData(center: PointLla, radius: number, osmData: Osm.Data) {
     const nodeMap: {[id: number]: Geo.Node} = {};
-    const features: Geo.Way[] = [];
+    const features: (Geo.Way | Geo.Node)[] = [];
     const coord = new Coord(center);
 
     // 因为默认osm数据node在前，所以可以在一个循环内处理
     osmData.elements.forEach((d) => {
+      const type = getType(d.tags);
+
       if (d.type === 'node') {
         // 经纬度转换为本地坐标
         const enu = coord.toEnu(d.lon, d.lat);
 
         nodeMap[d.id] = {
           ...d,
+          type,
           x: enu.e + radius / Math.sqrt(2),
           y: enu.n + radius / Math.sqrt(2),
         };
+        if (type === 'tree') {
+          features.push(nodeMap[d.id]);
+        }
       } else if (d.type === 'way') {
         const nodes = d.nodes.map((id: number) => nodeMap[id]);
         if (!getPolygonDirection(nodes)) {  // 判断多边形方向，如果相反，则进行反转
           nodes.reverse();
         }
-
-        const type = getType(d.tags);
 
         if (type === 'building') {
           features.push(OsmService.parseBuildingData(d, nodes));
@@ -51,6 +55,9 @@ export default class OsmService {
         } else if (type) {
           features.push(OsmService.parseWayData(d, nodes, type));
         }
+      } else if (d.type === 'relation') {
+        console.log('====relation', d)
+        Object.assign(window, { relation: d })
       }
     });
   

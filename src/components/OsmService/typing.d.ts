@@ -3,13 +3,6 @@ export declare namespace Osm {
     [key: string]: string;
   }
 
-  type Way = {
-    type: 'way';
-    id: number;
-    nodes: number[];
-    tags: Osm.Tags;
-  }
-
   type Node = {
     type: 'node';
     id: number;
@@ -18,7 +11,21 @@ export declare namespace Osm {
     tags?: Osm.Tags;
   }
 
-  type Element = Osm.Node | Osm.Way;
+  type Way = {
+    type: 'way';
+    id: number;
+    nodes: number[];
+    tags: Osm.Tags;
+  }
+
+  type Relation = {
+    type: 'relation';
+    id: number;
+    nodes: number[];
+    tags: Osm.Tags;
+  }
+
+  type Element = Osm.Relation | Osm.Way | Osm.Node;
 
   type Data = {
     elements: Element[];
@@ -26,9 +33,14 @@ export declare namespace Osm {
 }
 
 export declare namespace Geo {
-  type Node = Osm.Node & {
+  type Node = {
+    id: number;
+    type: string;
+    lon: number;
+    lat: number;
     x: number;
     y: number;
+    tags?: Osm.Tags;
   }
 
   type Way = {

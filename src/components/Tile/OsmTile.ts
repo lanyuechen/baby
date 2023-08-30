@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import OsmGround from '@/components/OsmMesh/Ground';
+import OsmTree from '@/components/OsmMesh/Tree';
 import * as OsmMeshes from '@/components/OsmMesh';
 import OsmService, { Geo } from '@/components/OsmService';
 import Coord, { PointLla } from '@/components/Coord';
@@ -26,34 +27,37 @@ export default class OsmTile extends BABYLON.AbstractMesh {
     const data = await OsmService.fetchData(this.center, this.tile.tileSize / Math.sqrt(2));
 
     console.log('geodata', data);
+    Object.assign(window, { data });
 
     data.forEach((d) => {
       if (d.type === 'building') {      // 建筑
-        const building = this.createMesh(d)
+        const building = this.createMesh(d as Geo.Way)
         this.scene.sun?.shadowGenerator.addShadowCaster(building, true);
       } else if (d.type === 'water') {  // 水域
-        this.createMesh(d);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'grass') {  // 草地
-        this.createMesh(d);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'fence') {  // 篱笆
-        this.createMesh(d);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'railway') {  // 铁路
-        this.createMesh(d);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'highway') {  // 公路
-        // this.createMesh(d);
+        this.createMesh(d as Geo.Way);
       } else if (d.type === 'area') {     // 其他区域
-        this.createMesh(d);
+        this.createMesh(d as Geo.Way);
+      } else if (d.type === 'tree') {     // 树
+        this.createTree(d as Geo.Node);
       } else if (d.type === 'unknown') {  // 未知
         
       }
     });
 
-    // 调试用
-    navigator.clipboard.writeText(JSON.stringify(data));
+    // navigator.clipboard.writeText(JSON.stringify(data));
 
-    this.createGround(
+    const ground = this.createGround(
       data.filter(d => ['water', 'grass'].includes(d.type)) as Geo.Way[]
     );
+    ground.position.y = -0.1;
 
     this.position.x = this.offsetX * this.tile.tileSize;
     this.position.z = this.offsetY * this.tile.tileSize;
@@ -62,6 +66,12 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   createMesh(data: Geo.Way) {
     const OsmMesh = OsmMeshes[data.type as OsmMeshes.OsmType] || OsmMeshes['area'];
     const mesh = new OsmMesh(this.scene, data);
+    mesh.parent = this;
+    return mesh;
+  }
+
+  createTree(data: Geo.Node) {
+    const mesh = new OsmTree(this.scene, data);;
     mesh.parent = this;
     return mesh;
   }

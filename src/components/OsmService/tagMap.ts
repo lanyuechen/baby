@@ -5,6 +5,7 @@ type MMap = {
 };
 
 const TAG_MAP: {[key:string]: MMap} = {
+  /************************ polygon ************************/
   building: {
     building: /.+/,
   },
@@ -16,6 +17,11 @@ const TAG_MAP: {[key:string]: MMap} = {
     natural: ['fell', 'gress' /* deprecated */, 'grassland', 'wood' /* 树林 */],
     landcover: ['grass'],
   },
+  area: {
+    leisure: ['pitch', 'golf_course'], // 球场、高尔夫
+    amenity: ['parking'], // 停车场
+  },
+  /************************ line ************************/
   highway: {
     highway: /.+/,
   },
@@ -25,31 +31,32 @@ const TAG_MAP: {[key:string]: MMap} = {
   fence: {
     barrier: ['fence'],
   },
-  area: {
-    leisure: ['pitch', 'golf_course'], // 球场、高尔夫
-    amenity: ['parking'], // 停车场
+  /************************ point ************************/
+  tree: {
+    natural: ['tree'],
   },
 }
 
-export const getType = (tags: Osm.Tags) => {
-  if (tags) {
-    for (let type in TAG_MAP) {
-      const mMap = TAG_MAP[type];
-      for (let key in mMap) {
-        const values = mMap[key];
-        if (tags[key]) {
-          if (values instanceof RegExp) {
-            if (values.test(tags[key])) {
-              return type;
-            }
-          } else {
-            if (values.includes(tags[key])) {
-              return type;
-            }
+export const getType = (tags?: Osm.Tags) => {
+  if (!tags) {
+    return '';
+  }
+  for (let type in TAG_MAP) {
+    const mMap = TAG_MAP[type];
+    for (let key in mMap) {
+      const values = mMap[key];
+      if (tags[key]) {
+        if (values instanceof RegExp) {
+          if (values.test(tags[key])) {
+            return type;
+          }
+        } else {
+          if (values.includes(tags[key])) {
+            return type;
           }
         }
       }
     }
-    return 'unknown';
   }
+  return 'unknown';
 }
