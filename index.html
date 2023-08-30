@@ -20,11 +20,26 @@
       width: 100%;
       height: 100%;
     }
+
+    #fps {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 16px;
+      color: white;
+      top: 15px;
+      right: 10px;
+      width: 60px;
+      height: 20px;
+      line-height: 20px;
+  }
   </style>
 </head>
 
 <body>
   <canvas id="renderCanvas"></canvas>
+  <div id="fps">0</div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

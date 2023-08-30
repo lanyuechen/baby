@@ -71,7 +71,7 @@ export default class OsmTile extends BABYLON.AbstractMesh {
   }
 
   createTree(data: Geo.Node) {
-    const mesh = new OsmTree(this.scene, data);;
+    const mesh = new OsmTree(this.scene, data);
     mesh.parent = this;
     return mesh;
   }

@@ -56,8 +56,7 @@ export default class OsmService {
           features.push(OsmService.parseWayData(d, nodes, type));
         }
       } else if (d.type === 'relation') {
-        console.log('====relation', d)
-        Object.assign(window, { relation: d })
+        // Object.assign(window, { relation: d })
       }
     });
   
